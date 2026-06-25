@@ -3,7 +3,8 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import ScreenHeader from '../components/ScreenHeader';
 import { AppContext } from '../context/AppContext';
 import { getNotifications, readNotification } from '../services/notificationService';
@@ -22,6 +23,8 @@ const navigateForRoute = (navigation, route) => {
 
 export default function NotificationsScreen({ navigation }) {
   const { user } = useContext(AppContext);
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -88,7 +91,7 @@ export default function NotificationsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { paddingHorizontal: 20, paddingBottom: 28, paddingTop: 4 },
   card: { backgroundColor: colors.card, borderRadius: radius.md, padding: 14, borderWidth: 1, borderColor: colors.borderSoft, flexDirection: 'row', alignItems: 'center', gap: 12 },

@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font } from '../theme';
+import { font } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 
 // Simple back-arrow + optional title row used on detail screens.
 export default function ScreenHeader({ title, onBack, right }) {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   return (
     <View style={styles.row}>
       <TouchableOpacity onPress={onBack} style={styles.btn}>
@@ -16,7 +19,7 @@ export default function ScreenHeader({ title, onBack, right }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',

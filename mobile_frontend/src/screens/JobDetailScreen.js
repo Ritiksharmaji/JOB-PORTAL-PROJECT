@@ -2,26 +2,33 @@ import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { logoFor } from '../assets';
 import { AppContext } from '../context/AppContext';
 import Tag from '../components/Tag';
 import { getJob } from '../services/jobService';
 import { pkgText, postedAgo, stripHtml } from '../utils/format';
 
-const InfoCard = ({ icon, label, value }) => (
-  <View style={styles.info}>
-    <Ionicons name={icon} size={22} color={colors.accent} />
-    <View style={{ flex: 1 }}>
-      <Text style={styles.infoLabel}>{label}</Text>
-      <Text style={styles.infoValue} numberOfLines={1}>{value}</Text>
+const InfoCard = ({ icon, label, value }) => {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
+  return (
+    <View style={styles.info}>
+      <Ionicons name={icon} size={22} color={colors.accent} />
+      <View style={{ flex: 1 }}>
+        <Text style={styles.infoLabel}>{label}</Text>
+        <Text style={styles.infoValue} numberOfLines={1}>{value}</Text>
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 export default function JobDetailScreen({ route, navigation }) {
   const jobId = route.params?.jobId;
   const { savedJobs, toggleSave, user } = useContext(AppContext);
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -134,7 +141,7 @@ export default function JobDetailScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   center: { alignItems: 'center', justifyContent: 'center' },
   notFound: { fontFamily: font.medium, fontSize: 15, color: colors.textDim },
@@ -155,7 +162,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontFamily: font.semibold, fontSize: 16, color: colors.text, marginTop: 24, marginBottom: 12 },
   skillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   para: { fontFamily: font.regular, fontSize: 13, lineHeight: 22, color: colors.textDim },
-  footer: { flexDirection: 'row', gap: 12, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8, borderTopWidth: 1, borderTopColor: '#3d3d3d' },
+  footer: { flexDirection: 'row', gap: 12, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8, borderTopWidth: 1, borderTopColor: colors.border },
   saveBtn: { width: 52, height: 50, borderRadius: radius.md, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center' },
   applyBtn: { flex: 1, backgroundColor: colors.accent, borderRadius: radius.md, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
   applyTxt: { fontFamily: font.semibold, fontSize: 15, color: colors.onAccent },

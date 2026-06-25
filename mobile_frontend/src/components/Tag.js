@@ -1,13 +1,16 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 
-// Small yellow-on-dark skill/tag pill.
+// Small accent-on-card skill/tag pill.
 export default function Tag({ children, style }) {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   return <Text style={[styles.tag, style]}>{children}</Text>;
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   tag: {
     backgroundColor: colors.cardAlt,
     color: colors.accent,

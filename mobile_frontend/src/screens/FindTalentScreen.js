@@ -3,13 +3,16 @@ import { View, Text, ScrollView, Image, TextInput, TouchableOpacity, StyleSheet,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { avatarFor } from '../assets';
 import { getAllProfiles } from '../services/profileService';
 
 const avatarSource = (p) => (p?.picture ? { uri: `data:image/jpeg;base64,${p.picture}` } : avatarFor('avatar'));
 
 export default function FindTalentScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
@@ -113,7 +116,7 @@ export default function FindTalentScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { paddingHorizontal: 20, paddingBottom: 28, paddingTop: 10 },
   title: { fontFamily: font.bold, fontSize: 22, color: colors.text, paddingTop: 6 },
@@ -132,7 +135,7 @@ const styles = StyleSheet.create({
   divider: { height: 1, backgroundColor: colors.border, marginVertical: 13 },
   cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   ctcLabel: { fontFamily: font.regular, fontSize: 10, color: colors.muted },
-  ctc: { fontFamily: font.semibold, fontSize: 13, color: '#d1d1d1' },
+  ctc: { fontFamily: font.semibold, fontSize: 13, color: colors.textDim },
   invite: { backgroundColor: colors.accent, paddingVertical: 8, paddingHorizontal: 16, borderRadius: 9 },
   inviteTxt: { fontFamily: font.semibold, fontSize: 12, color: colors.onAccent },
 });

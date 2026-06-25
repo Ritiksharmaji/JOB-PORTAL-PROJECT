@@ -1,9 +1,10 @@
 import React, { useContext, useCallback } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { avatarFor, BANNER } from '../assets';
 import { AppContext } from '../context/AppContext';
 import Tag from '../components/Tag';
@@ -11,6 +12,8 @@ import { formatDate } from '../utils/format';
 
 export default function ProfileScreen({ navigation }) {
   const { user, profile, refreshProfile, logout } = useContext(AppContext);
+  const { colors, isDark, toggleTheme } = useTheme();
+  const styles = makeStyles(colors);
 
   useFocusEffect(
     useCallback(() => {
@@ -110,13 +113,28 @@ export default function ProfileScreen({ navigation }) {
               </View>
             </>
           )}
+
+          {/* Appearance / theme toggle */}
+          <Text style={styles.sectionTitle}>Appearance</Text>
+          <View style={styles.themeRow}>
+            <View style={styles.themeLeft}>
+              <Ionicons name={isDark ? 'moon' : 'sunny'} size={18} color={colors.accent} />
+              <Text style={styles.themeTxt}>Dark mode</Text>
+            </View>
+            <Switch
+              value={isDark}
+              onValueChange={toggleTheme}
+              trackColor={{ false: colors.border, true: colors.accent }}
+              thumbColor={colors.white}
+            />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   bannerWrap: { height: 130 },
   banner: { width: '100%', height: '100%' },
@@ -147,4 +165,7 @@ const styles = StyleSheet.create({
   expDesc: { fontFamily: font.regular, fontSize: 12, lineHeight: 19, color: colors.textDim, marginTop: 11 },
   certCard: { backgroundColor: colors.card, borderRadius: radius.md, padding: 15 },
   certName: { fontFamily: font.semibold, fontSize: 13, color: colors.text },
+  themeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.card, borderRadius: radius.md, padding: 16, marginTop: 4 },
+  themeLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  themeTxt: { fontFamily: font.medium, fontSize: 14, color: colors.text },
 });

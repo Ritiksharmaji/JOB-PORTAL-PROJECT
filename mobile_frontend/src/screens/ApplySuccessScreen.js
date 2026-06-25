@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import PrimaryButton from '../components/PrimaryButton';
 import { getJob } from '../services/jobService';
 
 export default function ApplySuccessScreen({ route, navigation }) {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [job, setJob] = useState(null);
 
   useEffect(() => {
@@ -51,7 +54,7 @@ export default function ApplySuccessScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 36 },
   ring: { width: 96, height: 96, borderRadius: 48, backgroundColor: 'rgba(255,189,32,0.15)', alignItems: 'center', justifyContent: 'center' },

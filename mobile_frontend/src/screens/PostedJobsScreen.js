@@ -3,21 +3,25 @@ import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, ActivityIn
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { logoFor } from '../assets';
 import { AppContext } from '../context/AppContext';
 import { getJobsPostedBy } from '../services/jobService';
 import { postedAgo } from '../utils/format';
 
 const TABS = ['ACTIVE', 'DRAFT', 'CLOSED'];
-const STATUS_COLOR = {
+const STATUS_COLOR = (colors) => ({
   ACTIVE: { color: colors.success, bg: 'rgba(52,211,153,0.12)' },
   DRAFT: { color: colors.accent, bg: 'rgba(255,189,32,0.12)' },
   CLOSED: { color: colors.danger, bg: 'rgba(248,113,113,0.12)' },
-};
+});
 
 export default function PostedJobsScreen({ navigation }) {
   const { user } = useContext(AppContext);
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
+  const statusMap = STATUS_COLOR(colors);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('ACTIVE');
@@ -80,7 +84,7 @@ export default function PostedJobsScreen({ navigation }) {
         ) : (
           <View style={{ gap: 14, marginTop: 18 }}>
             {list.map((job) => {
-              const sc = STATUS_COLOR[job.jobStatus] || STATUS_COLOR.ACTIVE;
+              const sc = statusMap[job.jobStatus] || statusMap.ACTIVE;
               return (
                 <TouchableOpacity key={job.id} activeOpacity={0.85} style={styles.card} onPress={() => navigation.navigate('PostedDetail', { jobId: job.id })}>
                   <View style={styles.top}>
@@ -117,7 +121,7 @@ export default function PostedJobsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { paddingHorizontal: 20, paddingBottom: 28, paddingTop: 10 },
   titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 6 },
@@ -139,7 +143,7 @@ const styles = StyleSheet.create({
   divider: { height: 1, backgroundColor: colors.border, marginVertical: 13 },
   footer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   applicants: { flexDirection: 'row', alignItems: 'center', gap: 7 },
-  applicantsTxt: { fontFamily: font.regular, fontSize: 12.5, color: '#d1d1d1' },
+  applicantsTxt: { fontFamily: font.regular, fontSize: 12.5, color: colors.textDim },
   posted: { fontFamily: font.regular, fontSize: 11, color: colors.muted },
   empty: { alignItems: 'center', justifyContent: 'center', paddingVertical: 70 },
   emptyTitle: { fontFamily: font.medium, fontSize: 15, color: colors.textDim, marginTop: 14 },

@@ -2,7 +2,8 @@ import React, { useContext, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { AppContext } from '../context/AppContext';
 import Field from '../components/Field';
 import ResetPasswordModal from '../components/ResetPasswordModal';
@@ -11,6 +12,8 @@ import { validateLogin } from '../utils/validation';
 
 export default function LoginScreen({ navigation }) {
   const { login } = useContext(AppContext);
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -95,7 +98,7 @@ export default function LoginScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { flexGrow: 1, paddingHorizontal: 26, paddingBottom: 24, paddingTop: 20 },
   brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
