@@ -6,18 +6,21 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // 'mine-shaft' resolves to CSS variables so the whole UI can flip between
+        // dark (default) and light (.light-theme on <html>) without editing components.
+        // The variable values (and their inversion for light) live in index.css.
         'mine-shaft': {
-          '50': '#f6f6f6',
-          '100': '#e7e7e7',
-          '200': '#d1d1d1',
-          '300': '#b0b0b0',
-          '400': '#888888',
-          '500': '#6d6d6d',
-          '600': '#5d5d5d',
-          '700': '#4f4f4f',
-          '800': '#454545',
-          '900': '#3d3d3d',
-          '950': '#2d2d2d',
+          '50': 'rgb(var(--ms-50) / <alpha-value>)',
+          '100': 'rgb(var(--ms-100) / <alpha-value>)',
+          '200': 'rgb(var(--ms-200) / <alpha-value>)',
+          '300': 'rgb(var(--ms-300) / <alpha-value>)',
+          '400': 'rgb(var(--ms-400) / <alpha-value>)',
+          '500': 'rgb(var(--ms-500) / <alpha-value>)',
+          '600': 'rgb(var(--ms-600) / <alpha-value>)',
+          '700': 'rgb(var(--ms-700) / <alpha-value>)',
+          '800': 'rgb(var(--ms-800) / <alpha-value>)',
+          '900': 'rgb(var(--ms-900) / <alpha-value>)',
+          '950': 'rgb(var(--ms-950) / <alpha-value>)',
         },
         'bright-sun': {
         '50': '#fffbeb',

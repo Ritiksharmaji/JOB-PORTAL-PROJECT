@@ -1,6 +1,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ---- Theme variables (the 'mine-shaft' Tailwind scale resolves to these) ----
+   Default = DARK. Adding `.light-theme` to <html> swaps in the inverted ramp,
+   so every `bg/text/border-mine-shaft-*` class flips with no component edits. */
+:root {
+  --ms-50: 246 246 246;
+  --ms-100: 231 231 231;
+  --ms-200: 209 209 209;
+  --ms-300: 176 176 176;
+  --ms-400: 136 136 136;
+  --ms-500: 109 109 109;
+  --ms-600: 93 93 93;
+  --ms-700: 79 79 79;
+  --ms-800: 69 69 69;
+  --ms-900: 61 61 61;
+  --ms-950: 45 45 45;
+}
+
+html.light-theme {
+  --ms-50: 45 45 45;
+  --ms-100: 61 61 61;
+  --ms-200: 69 69 69;
+  --ms-300: 79 79 79;
+  --ms-400: 93 93 93;
+  --ms-500: 109 109 109;
+  --ms-600: 136 136 136;
+  --ms-700: 176 176 176;
+  --ms-800: 209 209 209;
+  --ms-900: 231 231 231;
+  --ms-950: 246 246 246;
+}
+
+/* Base page surface flips with the theme too. */
+body {
+  background-color: rgb(var(--ms-950));
+  color: rgb(var(--ms-100));
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
 @layer base {
     ul, ol {
       list-style: revert;

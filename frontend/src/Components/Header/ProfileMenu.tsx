@@ -1,4 +1,5 @@
-import { Menu, rem, Avatar, Switch } from '@mantine/core';
+import { Menu, rem, Avatar, Switch, useMantineColorScheme } from '@mantine/core';
+import { applyTailwindScheme, getStoredScheme } from '../../theme/themeUtils';
 import {
     IconMessageCircle,
     IconLogout2,
@@ -18,10 +19,18 @@ const ProfileMenu = () => {
     const user=useSelector((state:any)=>state.user);
     const profile=useSelector((state:any)=>state.profile);
     const [opened, setOpened] = useState(false);
-    const [checked, setChecked] = useState(false);
+    const { setColorScheme } = useMantineColorScheme();
+    // Switch is ON for light mode.
+    const [checked, setChecked] = useState(getStoredScheme() === 'light');
     const dispatch = useDispatch();
+    const toggleTheme = (isLight: boolean) => {
+        const scheme = isLight ? 'light' : 'dark';
+        setChecked(isLight);
+        applyTailwindScheme(scheme); // flips Tailwind (mine-shaft) colors
+        setColorScheme(scheme);      // flips Mantine components
+    };
     const handleLogout=()=>{
-        
+
         dispatch(removeUser());
         dispatch(removeJwt());
     }
@@ -46,6 +55,8 @@ const ProfileMenu = () => {
                     Resume
                 </Menu.Item>
                 <Menu.Item
+                    closeMenuOnClick={false}
+                    onClick={() => toggleTheme(!checked)}
                     leftSection={<IconMoon style={{ width: rem(14), height: rem(14) }} />}
                     rightSection={
                         <Switch size="sm" color="dark" className='cursor-pointer'
@@ -59,11 +70,11 @@ const ProfileMenu = () => {
                                 color="cyan"
                             />}
                             checked={checked}
-                            onChange={(event) => setChecked(event.currentTarget.checked)}
+                            onChange={(event) => toggleTheme(event.currentTarget.checked)}
                         />
                     }
                 >
-                    Dark Mode
+                    {checked ? 'Light Mode' : 'Dark Mode'}
                 </Menu.Item>
 
                 <Menu.Divider />

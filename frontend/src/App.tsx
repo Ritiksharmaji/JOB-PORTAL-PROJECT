@@ -14,8 +14,14 @@ import AppRoutes from './Pages/AppRoutes';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useEffect } from 'react';
+import { applyTailwindScheme, getStoredScheme } from './theme/themeUtils';
+
+const initialScheme = getStoredScheme();
+
 function App() {
   useEffect(()=>{
+    // Apply the saved theme to the Tailwind layer on load.
+    applyTailwindScheme(initialScheme);
     AOS.init({
       offset: 0,
       duration:800,
@@ -37,7 +43,7 @@ function App() {
   })
   return (
     <Provider store={Store}>
-    <MantineProvider defaultColorScheme="dark" theme={theme} >
+    <MantineProvider defaultColorScheme={initialScheme} theme={theme} >
        <Notifications  position="top-center" zIndex={2001} />
       <AppRoutes/>
     </MantineProvider>
