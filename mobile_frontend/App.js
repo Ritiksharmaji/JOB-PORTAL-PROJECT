@@ -12,27 +12,28 @@ import {
 } from '@expo-google-fonts/poppins';
 
 import { AppProvider, AppContext } from './src/context/AppContext';
+import { ThemeProvider, useTheme } from './src/context/ThemeContext';
 import RootNavigator from './src/navigation/RootNavigator';
-import { colors } from './src/theme';
-
-const navTheme = {
-  ...DefaultTheme,
-  colors: { ...DefaultTheme.colors, background: colors.bg },
-};
+import { darkColors } from './src/theme';
 
 const Splash = () => (
   <View style={styles.loader}>
-    <ActivityIndicator color={colors.accent} size="large" />
+    <ActivityIndicator color={darkColors.accent} size="large" />
   </View>
 );
 
-// Reads auth-restore state from context, so it must live inside AppProvider.
+// Reads auth-restore state from context + the active theme.
 function Root() {
   const { isLoading } = useContext(AppContext);
+  const { colors, isDark } = useTheme();
   if (isLoading) return <Splash />;
+  const navTheme = {
+    ...DefaultTheme,
+    colors: { ...DefaultTheme.colors, background: colors.bg },
+  };
   return (
     <NavigationContainer theme={navTheme}>
-      <StatusBar style="light" />
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <RootNavigator />
     </NavigationContainer>
   );
@@ -50,13 +51,15 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <AppProvider>
-        <Root />
-      </AppProvider>
+      <ThemeProvider>
+        <AppProvider>
+          <Root />
+        </AppProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  loader: { flex: 1, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center' },
+  loader: { flex: 1, backgroundColor: darkColors.bg, alignItems: 'center', justifyContent: 'center' },
 });

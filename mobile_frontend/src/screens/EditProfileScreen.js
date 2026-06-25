@@ -3,7 +3,8 @@ import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, ActivityIn
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { avatarFor } from '../assets';
 import { AppContext } from '../context/AppContext';
 import Field from '../components/Field';
@@ -24,6 +25,8 @@ const dateText = (iso) => (iso ? String(iso).slice(0, 10) : '');
 
 export default function EditProfileScreen({ navigation }) {
   const { profile, user, saveProfile } = useContext(AppContext);
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const base = profile || { id: user?.profileId, name: user?.name, email: user?.email };
 
   const [picture, setPicture] = useState(base.picture || '');
@@ -198,7 +201,7 @@ export default function EditProfileScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { paddingHorizontal: 20, paddingBottom: 40 },
   picRow: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 6 },

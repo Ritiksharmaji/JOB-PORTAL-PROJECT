@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, TextInput, Text, StyleSheet } from 'react-native';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 
-// Labeled dark text field used across forms.
+// Labeled text field used across forms.
 export default function Field({ label, style, inputStyle, multiline, ...props }) {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   return (
     <View style={style}>
       {label ? <Text style={styles.label}>{label}</Text> : null}
@@ -17,7 +20,7 @@ export default function Field({ label, style, inputStyle, multiline, ...props })
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   label: {
     fontFamily: font.regular,
     fontSize: 12,

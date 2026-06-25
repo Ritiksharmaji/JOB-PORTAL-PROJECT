@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import Field from '../components/Field';
 import PrimaryButton from '../components/PrimaryButton';
 import { AppContext } from '../context/AppContext';
@@ -11,24 +12,30 @@ import { errMessage } from '../api/client';
 const EXPERIENCE = ['Entry Level', 'Intermediate', 'Expert'];
 const JOB_TYPES = ['Full-Time', 'Part-Time', 'Internship', 'Remote'];
 
-const ChipRow = ({ label, options, value, onChange }) => (
-  <View>
-    <Text style={styles.label}>{label}</Text>
-    <View style={styles.chipRow}>
-      {options.map((o) => {
-        const on = value === o;
-        return (
-          <TouchableOpacity key={o} onPress={() => onChange(o)} style={[styles.chip, on ? styles.chipOn : styles.chipOff]}>
-            <Text style={[styles.chipTxt, { color: on ? colors.onAccent : '#d1d1d1' }]}>{o}</Text>
-          </TouchableOpacity>
-        );
-      })}
+const ChipRow = ({ label, options, value, onChange }) => {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
+  return (
+    <View>
+      <Text style={styles.label}>{label}</Text>
+      <View style={styles.chipRow}>
+        {options.map((o) => {
+          const on = value === o;
+          return (
+            <TouchableOpacity key={o} onPress={() => onChange(o)} style={[styles.chip, on ? styles.chipOn : styles.chipOff]}>
+              <Text style={[styles.chipTxt, { color: on ? colors.onAccent : colors.textDim }]}>{o}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 export default function PostJobScreen({ route, navigation }) {
   const { user } = useContext(AppContext);
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const editId = route.params?.jobId; // present when editing
   const [loadingJob, setLoadingJob] = useState(!!editId);
 
@@ -149,7 +156,7 @@ export default function PostJobScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { paddingHorizontal: 20, paddingBottom: 40, paddingTop: 10 },
   title: { fontFamily: font.bold, fontSize: 22, color: colors.text, paddingTop: 6 },

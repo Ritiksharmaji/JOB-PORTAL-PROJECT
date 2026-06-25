@@ -1,14 +1,17 @@
 import React, { useContext } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
 import { logoFor } from '../assets';
 import { pkgText, postedAgo, stripHtml } from '../utils/format';
 import { AppContext } from '../context/AppContext';
+import { useTheme } from '../context/ThemeContext';
 import Tag from './Tag';
 
 export default function JobCard({ job, onPress }) {
   const { savedJobs, toggleSave } = useContext(AppContext);
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const saved = savedJobs.includes(job.id);
   const applicantCount = Array.isArray(job.applicants) ? job.applicants.length : (job.applicants || 0);
   const blurb = job.about || stripHtml(job.description);
@@ -60,7 +63,7 @@ export default function JobCard({ job, onPress }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   card: {
     backgroundColor: colors.card,
     borderRadius: radius.lg,
@@ -82,7 +85,7 @@ const styles = StyleSheet.create({
   desc: { fontFamily: font.regular, fontSize: 11.5, lineHeight: 18, color: colors.textDim },
   divider: { height: 1, backgroundColor: colors.border },
   footer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  pkg: { fontFamily: font.semibold, fontSize: 14, color: '#d1d1d1' },
+  pkg: { fontFamily: font.semibold, fontSize: 14, color: colors.textDim },
   ago: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   agoTxt: { fontFamily: font.regular, fontSize: 11, color: colors.muted },
 });

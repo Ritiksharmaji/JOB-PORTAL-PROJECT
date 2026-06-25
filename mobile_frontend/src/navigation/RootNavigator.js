@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { colors } from '../theme';
 import { AppContext } from '../context/AppContext';
+import { useTheme } from '../context/ThemeContext';
 
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
@@ -21,6 +21,7 @@ const Stack = createNativeStackNavigator();
 
 export default function RootNavigator() {
   const { isSignedIn, role } = useContext(AppContext);
+  const { colors } = useTheme();
 
   return (
     <Stack.Navigator

@@ -1,7 +1,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font } from '../theme';
+import { font } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 
 import HomeScreen from '../screens/HomeScreen';
 import FindJobsScreen from '../screens/FindJobsScreen';
@@ -14,13 +15,13 @@ import PostedJobsScreen from '../screens/PostedJobsScreen';
 
 const Tab = createBottomTabNavigator();
 
-const screenOptions = ({ route }) => ({
+const makeScreenOptions = (colors) => () => ({
   headerShown: false,
   tabBarActiveTintColor: colors.accent,
   tabBarInactiveTintColor: colors.muted,
   tabBarStyle: {
     backgroundColor: colors.navBar,
-    borderTopColor: '#3d3d3d',
+    borderTopColor: colors.border,
     height: 64,
     paddingBottom: 10,
     paddingTop: 8,
@@ -31,8 +32,9 @@ const screenOptions = ({ route }) => ({
 const icon = (name) => ({ color, size }) => <Ionicons name={name} size={size ?? 22} color={color} />;
 
 export function ApplicantTabs() {
+  const { colors } = useTheme();
   return (
-    <Tab.Navigator screenOptions={screenOptions}>
+    <Tab.Navigator screenOptions={makeScreenOptions(colors)}>
       <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: icon('home-outline') }} />
       <Tab.Screen name="Jobs" component={FindJobsScreen} options={{ tabBarIcon: icon('search-outline') }} />
       <Tab.Screen name="My Jobs" component={MyJobsScreen} options={{ tabBarIcon: icon('bookmark-outline') }} />
@@ -42,8 +44,9 @@ export function ApplicantTabs() {
 }
 
 export function EmployerTabs() {
+  const { colors } = useTheme();
   return (
-    <Tab.Navigator screenOptions={screenOptions}>
+    <Tab.Navigator screenOptions={makeScreenOptions(colors)}>
       <Tab.Screen name="Talent" component={FindTalentScreen} options={{ tabBarIcon: icon('people-outline') }} />
       <Tab.Screen name="Post" component={PostJobScreen} options={{ tabBarIcon: icon('add-circle-outline') }} />
       <Tab.Screen name="Listings" component={PostedJobsScreen} options={{ tabBarIcon: icon('list-outline') }} />
