@@ -28,6 +28,9 @@ public class Utilities {
 		update.inc("seq", 1);
 		FindAndModifyOptions options = new FindAndModifyOptions();
 		options.returnNew(true);
+		// Create the counter document on first use (fresh DB has no sequence docs yet);
+		// otherwise findAndModify returns null and registration/job-post/etc. fail.
+		options.upsert(true);
 		Sequence seqId = mongoOperation.findAndModify(query, update, options, Sequence.class);
 		if (seqId == null) {
 			throw new JobPortalException("Unable to get sequence id for key : " + key);
