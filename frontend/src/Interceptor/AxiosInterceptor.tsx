@@ -3,7 +3,8 @@ import { removeUser } from "../Slices/UserSlice";
 import { removeJwt } from "../Slices/JwtSlice";
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080'
+    // baseURL: 'http://localhost:8080'
+     baseURL: 'https://job-portal-project-1-f7oc.onrender.com'
 });
 
 axiosInstance.interceptors.request.use(
