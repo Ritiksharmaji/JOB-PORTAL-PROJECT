@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import Field from './Field';
 import { sendOtp, verifyOtp, changePassword } from '../services/authService';
 import { errMessage } from '../api/client';
@@ -10,6 +11,8 @@ import { validateField } from '../utils/validation';
 // Three-step OTP reset flow mirroring the web ResetPassword modal:
 // 1) email -> sendOtp  2) otp -> verifyOtp  3) new password -> changePass
 export default function ResetPasswordModal({ visible, onClose, initialEmail = '' }) {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState(initialEmail);
   const [otp, setOtp] = useState('');
@@ -111,13 +114,17 @@ export default function ResetPasswordModal({ visible, onClose, initialEmail = ''
   );
 }
 
-const Btn = ({ label, loading, onPress }) => (
-  <TouchableOpacity style={[styles.btn, loading && { opacity: 0.7 }]} onPress={onPress} disabled={loading}>
-    {loading ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.btnTxt}>{label}</Text>}
-  </TouchableOpacity>
-);
+const Btn = ({ label, loading, onPress }) => {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
+  return (
+    <TouchableOpacity style={[styles.btn, loading && { opacity: 0.7 }]} onPress={onPress} disabled={loading}>
+      {loading ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.btnTxt}>{label}</Text>}
+    </TouchableOpacity>
+  );
+};
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   sheet: { backgroundColor: colors.bg, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, padding: 22, paddingBottom: 34, gap: 14 },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },

@@ -3,7 +3,8 @@ import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, ActivityIn
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { CATEGORIES } from '../data/jobs';
 import { avatarFor } from '../assets';
 import { AppContext } from '../context/AppContext';
@@ -12,6 +13,8 @@ import { getAllJobs } from '../services/jobService';
 
 export default function HomeScreen({ navigation }) {
   const { user, profile } = useContext(AppContext);
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -57,7 +60,7 @@ export default function HomeScreen({ navigation }) {
             </View>
           </View>
           <TouchableOpacity style={styles.bell} onPress={() => navigation.navigate('Notifications')}>
-            <Ionicons name="notifications-outline" size={21} color="#d1d1d1" />
+            <Ionicons name="notifications-outline" size={21} color={colors.textDim} />
           </TouchableOpacity>
         </View>
 
@@ -107,7 +110,7 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { paddingHorizontal: 20, paddingBottom: 28, paddingTop: 6 },
   topRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },

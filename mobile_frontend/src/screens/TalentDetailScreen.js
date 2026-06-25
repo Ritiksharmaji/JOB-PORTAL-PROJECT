@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { avatarFor } from '../assets';
 import ScreenHeader from '../components/ScreenHeader';
 import Tag from '../components/Tag';
@@ -10,6 +11,8 @@ import { getProfile } from '../services/profileService';
 import { formatDate } from '../utils/format';
 
 export default function TalentDetailScreen({ route, navigation }) {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const id = route.params?.talentId;
   const [t, setT] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -117,7 +120,7 @@ export default function TalentDetailScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   center: { alignItems: 'center', justifyContent: 'center' },
   muted: { fontFamily: font.medium, fontSize: 15, color: colors.textDim },

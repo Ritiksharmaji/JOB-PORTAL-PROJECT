@@ -3,7 +3,8 @@ import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, ActivityIn
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { logoFor } from '../assets';
 import { AppContext } from '../context/AppContext';
 import Field from '../components/Field';
@@ -16,6 +17,8 @@ import { errMessage } from '../api/client';
 export default function ApplyScreen({ route, navigation }) {
   const jobId = route.params?.jobId;
   const { user } = useContext(AppContext);
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [job, setJob] = useState(null);
   const [phone, setPhone] = useState('');
   const [website, setWebsite] = useState('');
@@ -115,7 +118,7 @@ export default function ApplyScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { paddingHorizontal: 20, paddingBottom: 30 },
   jobRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.card, borderRadius: radius.lg, padding: 13 },
@@ -126,7 +129,7 @@ const styles = StyleSheet.create({
   label: { fontFamily: font.regular, fontSize: 12, color: colors.textDim, marginBottom: 7 },
   readonly: { color: colors.muted },
   upload: { borderWidth: 1.5, borderColor: colors.border, borderStyle: 'dashed', borderRadius: radius.md, paddingVertical: 22, alignItems: 'center', gap: 8 },
-  uploadTitle: { fontFamily: font.regular, fontSize: 13, color: '#d1d1d1', paddingHorizontal: 16, textAlign: 'center' },
+  uploadTitle: { fontFamily: font.regular, fontSize: 13, color: colors.textDim, paddingHorizontal: 16, textAlign: 'center' },
   uploadHint: { fontFamily: font.regular, fontSize: 11, color: colors.muted },
   submitting: { backgroundColor: colors.accent, borderRadius: radius.md, paddingVertical: 15, alignItems: 'center', marginTop: 22 },
 });
