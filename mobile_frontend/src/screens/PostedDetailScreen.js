@@ -2,7 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { logoFor } from '../assets';
 import ScreenHeader from '../components/ScreenHeader';
 import { getJob, changeAppStatus, postJob } from '../services/jobService';
@@ -26,6 +27,8 @@ const defaultInterviewTime = () => {
 
 export default function PostedDetailScreen({ route, navigation }) {
   const jobId = route.params?.jobId;
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('APPLIED');
@@ -130,7 +133,7 @@ export default function PostedDetailScreen({ route, navigation }) {
             const on = tab === t.key;
             return (
               <TouchableOpacity key={t.key} onPress={() => setTab(t.key)} style={[styles.tab, on ? styles.tabOn : styles.tabOff]}>
-                <Text style={[styles.tabTxt, { color: on ? colors.onAccent : '#d1d1d1' }]}>{t.label} ({counts[t.key] || 0})</Text>
+                <Text style={[styles.tabTxt, { color: on ? colors.onAccent : colors.textDim }]}>{t.label} ({counts[t.key] || 0})</Text>
               </TouchableOpacity>
             );
           })}
@@ -176,21 +179,25 @@ export default function PostedDetailScreen({ route, navigation }) {
   );
 }
 
-const ActBtn = ({ label, onPress, busy, primary, danger }) => (
-  <TouchableOpacity
-    style={[styles.actBtn, primary && styles.actPrimary, danger && styles.actDanger]}
-    onPress={onPress}
-    disabled={busy}
-  >
-    {busy ? (
-      <ActivityIndicator size="small" color={primary ? colors.onAccent : colors.text} />
-    ) : (
-      <Text style={[styles.actTxt, primary && { color: colors.onAccent }, danger && { color: colors.danger }]}>{label}</Text>
-    )}
-  </TouchableOpacity>
-);
+const ActBtn = ({ label, onPress, busy, primary, danger }) => {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
+  return (
+    <TouchableOpacity
+      style={[styles.actBtn, primary && styles.actPrimary, danger && styles.actDanger]}
+      onPress={onPress}
+      disabled={busy}
+    >
+      {busy ? (
+        <ActivityIndicator size="small" color={primary ? colors.onAccent : colors.text} />
+      ) : (
+        <Text style={[styles.actTxt, primary && { color: colors.onAccent }, danger && { color: colors.danger }]}>{label}</Text>
+      )}
+    </TouchableOpacity>
+  );
+};
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   center: { alignItems: 'center', justifyContent: 'center' },
   muted: { fontFamily: font.medium, fontSize: 15, color: colors.textDim },

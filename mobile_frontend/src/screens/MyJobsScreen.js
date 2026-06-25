@@ -3,14 +3,15 @@ import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, ActivityIn
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { logoFor } from '../assets';
 import { AppContext } from '../context/AppContext';
 import JobCard from '../components/JobCard';
 import { getAllJobs } from '../services/jobService';
 import { pkgText, timeAgo } from '../utils/format';
 
-const STATUS_STYLE = (st) => {
+const STATUS_STYLE = (colors, st) => {
   switch (st) {
     case 'OFFERED':
       return { color: colors.success, bg: 'rgba(52,211,153,0.12)', label: 'Offered' };
@@ -19,12 +20,14 @@ const STATUS_STYLE = (st) => {
     case 'REJECTED':
       return { color: colors.danger, bg: 'rgba(248,113,113,0.12)', label: 'Rejected' };
     default:
-      return { color: colors.textDim, bg: '#454545', label: 'Applied' };
+      return { color: colors.textDim, bg: colors.cardAlt, label: 'Applied' };
   }
 };
 
 export default function MyJobsScreen({ navigation }) {
   const { user, savedJobs, historyTab, setHistoryTab } = useContext(AppContext);
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [allJobs, setAllJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -85,7 +88,7 @@ export default function MyJobsScreen({ navigation }) {
           applied.length > 0 ? (
             <View style={{ gap: 13, marginTop: 18 }}>
               {applied.map(({ job, app }) => {
-                const st = STATUS_STYLE(app.applicationStatus);
+                const st = STATUS_STYLE(colors, app.applicationStatus);
                 return (
                   <TouchableOpacity key={job.id} activeOpacity={0.85} style={styles.appliedCard} onPress={() => navigation.navigate('JobDetail', { jobId: job.id })}>
                     <View style={styles.appliedTop}>
@@ -134,7 +137,7 @@ export default function MyJobsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { paddingHorizontal: 20, paddingBottom: 28, paddingTop: 10 },
   title: { fontFamily: font.bold, fontSize: 22, color: colors.text, paddingTop: 6 },
@@ -152,7 +155,7 @@ const styles = StyleSheet.create({
   divider: { height: 1, backgroundColor: colors.border },
   appliedFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   appliedDate: { fontFamily: font.regular, fontSize: 12, color: colors.muted },
-  appliedPkg: { fontFamily: font.semibold, fontSize: 13, color: '#d1d1d1' },
+  appliedPkg: { fontFamily: font.semibold, fontSize: 13, color: colors.textDim },
   empty: { alignItems: 'center', justifyContent: 'center', paddingVertical: 70 },
   emptyTitle: { fontFamily: font.medium, fontSize: 15, color: colors.textDim, marginTop: 14 },
   emptySub: { fontFamily: font.regular, fontSize: 13, color: colors.muted, marginTop: 4 },

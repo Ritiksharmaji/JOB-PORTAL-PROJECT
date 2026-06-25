@@ -2,7 +2,8 @@ import React, { useState, useContext } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { AppContext } from '../context/AppContext';
 import Field from '../components/Field';
 import { errMessage } from '../api/client';
@@ -10,6 +11,8 @@ import { validateSignup } from '../utils/validation';
 
 export default function SignupScreen({ navigation }) {
   const { register } = useContext(AppContext);
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [accountType, setAccountType] = useState('APPLICANT');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -92,7 +95,7 @@ export default function SignupScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { flexGrow: 1, paddingHorizontal: 26, paddingBottom: 24, paddingTop: 14 },
   back: { width: 38, height: 38, borderRadius: 10, backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center' },

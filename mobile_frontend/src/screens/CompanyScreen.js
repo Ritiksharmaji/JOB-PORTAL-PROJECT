@@ -2,21 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { logoFor } from '../assets';
 import ScreenHeader from '../components/ScreenHeader';
 import JobCard from '../components/JobCard';
 import { getAllJobs } from '../services/jobService';
 
-const Stat = ({ value, label }) => (
-  <View style={styles.stat}>
-    <Text style={styles.statValue}>{value}</Text>
-    <Text style={styles.statLabel}>{label}</Text>
-  </View>
-);
+const Stat = ({ value, label }) => {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
+  return (
+    <View style={styles.stat}>
+      <Text style={styles.statValue}>{value}</Text>
+      <Text style={styles.statLabel}>{label}</Text>
+    </View>
+  );
+};
 
 export default function CompanyScreen({ route, navigation }) {
   const companyName = route.params?.company;
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -61,7 +68,7 @@ export default function CompanyScreen({ route, navigation }) {
           <ActivityIndicator color={colors.accent} style={{ marginTop: 18 }} />
         ) : jobs.length === 0 ? (
           <View style={styles.empty}>
-            <Ionicons name="briefcase-outline" size={40} color="#5d5d5d" />
+            <Ionicons name="briefcase-outline" size={40} color={colors.muted} />
             <Text style={styles.emptyTxt}>No open positions right now.</Text>
           </View>
         ) : (
@@ -76,7 +83,7 @@ export default function CompanyScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { paddingHorizontal: 20, paddingBottom: 28 },
   hero: { alignItems: 'center', paddingTop: 6 },

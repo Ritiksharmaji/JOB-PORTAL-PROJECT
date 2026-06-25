@@ -3,7 +3,8 @@ import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Activi
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, font, radius } from '../theme';
+import { font, radius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import JobCard from '../components/JobCard';
 import { getAllJobs } from '../services/jobService';
 
@@ -11,6 +12,8 @@ const FILTERS = ['All', 'Full-Time', 'Remote', 'Entry Level'];
 const SORTS = ['Most Recent', 'Salary: High to Low', 'Salary: Low to High'];
 
 export default function FindJobsScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [allJobs, setAllJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
@@ -90,7 +93,7 @@ export default function FindJobsScreen({ navigation }) {
             const on = chip === f;
             return (
               <TouchableOpacity key={f} onPress={() => setChip(f)} style={[styles.chip, on ? styles.chipOn : styles.chipOff]}>
-                <Text style={[styles.chipTxt, { color: on ? colors.onAccent : '#d1d1d1' }]}>{f}</Text>
+                <Text style={[styles.chipTxt, { color: on ? colors.onAccent : colors.textDim }]}>{f}</Text>
               </TouchableOpacity>
             );
           })}
@@ -100,7 +103,7 @@ export default function FindJobsScreen({ navigation }) {
           <Text style={styles.count}>{jobs.length} jobs found</Text>
           <TouchableOpacity style={styles.sort} onPress={() => setSortIdx((i) => (i + 1) % SORTS.length)}>
             <Text style={styles.sortTxt}>Sort: {SORTS[sortIdx]}</Text>
-            <Ionicons name="swap-vertical" size={14} color="#d1d1d1" />
+            <Ionicons name="swap-vertical" size={14} color={colors.textDim} />
           </TouchableOpacity>
         </View>
 
@@ -120,7 +123,7 @@ export default function FindJobsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { paddingHorizontal: 20, paddingBottom: 28, paddingTop: 10 },
   title: { fontFamily: font.bold, fontSize: 22, color: colors.text, paddingTop: 6 },
@@ -135,6 +138,6 @@ const styles = StyleSheet.create({
   metaRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 18, marginBottom: 14 },
   count: { fontFamily: font.regular, fontSize: 13, color: colors.muted },
   sort: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  sortTxt: { fontFamily: font.regular, fontSize: 12, color: '#d1d1d1' },
+  sortTxt: { fontFamily: font.regular, fontSize: 12, color: colors.textDim },
   empty: { fontFamily: font.regular, fontSize: 13, color: colors.muted, marginTop: 24, textAlign: 'center' },
 });
