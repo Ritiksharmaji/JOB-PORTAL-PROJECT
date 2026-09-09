@@ -12,9 +12,9 @@ import { Platform } from 'react-native';
 const MANUAL_API_URL = null;
 
 const FALLBACK_API_URL = Platform.select({
-  android: 'http://10.0.2.2:8080', // Android emulator -> host machine's localhost
-  ios: 'http://localhost:8080', // iOS simulator
-  default: 'http://localhost:8080',
+  android: 'https://job-portal-project-1-f7oc.onrender.com', // deployed backend (Render)
+  ios: 'https://job-portal-project-1-f7oc.onrender.com', // deployed backend (Render)
+  default: 'https://job-portal-project-1-f7oc.onrender.com',
 });
 
 export const API_URL = MANUAL_API_URL || FALLBACK_API_URL;
