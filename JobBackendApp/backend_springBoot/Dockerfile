@@ -8,5 +8,5 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 COPY --from=build /app/target/JobPortal-0.0.1-SNAPSHOT.jar JobPortal.jar
-EXPOSE 8080
+EXPOSE 808
 ENTRYPOINT ["java","-jar","JobPortal.jar"]
