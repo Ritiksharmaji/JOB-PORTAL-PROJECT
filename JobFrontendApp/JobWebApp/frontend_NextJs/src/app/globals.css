@@ -1,0 +1,129 @@
+/*
+ * Cascade-layer order: Tailwind utilities must win over Mantine component styles,
+ * so Mantine's *layered* stylesheets are loaded into a `mantine` layer that sits
+ * between Tailwind's base and utilities layers.
+ */
+@layer theme, base, mantine, components, utilities;
+
+@import '@mantine/core/styles.layer.css';
+@import '@mantine/dates/styles.layer.css';
+@import '@mantine/carousel/styles.layer.css';
+@import '@mantine/tiptap/styles.layer.css';
+@import '@mantine/notifications/styles.layer.css';
+@import 'aos/dist/aos.css';
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------
+   Theme tokens. 'mine-shaft' resolves to CSS variables so the UI flips
+   between dark (default) and light (.light-theme on <html>).
+   ------------------------------------------------------------------ */
+@theme {
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+
+  --color-mine-shaft-50: rgb(var(--ms-50));
+  --color-mine-shaft-100: rgb(var(--ms-100));
+  --color-mine-shaft-200: rgb(var(--ms-200));
+  --color-mine-shaft-300: rgb(var(--ms-300));
+  --color-mine-shaft-400: rgb(var(--ms-400));
+  --color-mine-shaft-500: rgb(var(--ms-500));
+  --color-mine-shaft-600: rgb(var(--ms-600));
+  --color-mine-shaft-700: rgb(var(--ms-700));
+  --color-mine-shaft-800: rgb(var(--ms-800));
+  --color-mine-shaft-900: rgb(var(--ms-900));
+  --color-mine-shaft-950: rgb(var(--ms-950));
+
+  --color-bright-sun-50: #fffbeb;
+  --color-bright-sun-100: #fff3c6;
+  --color-bright-sun-200: #ffe588;
+  --color-bright-sun-300: #ffd149;
+  --color-bright-sun-400: #ffbd20;
+  --color-bright-sun-500: #f99b07;
+  --color-bright-sun-600: #dd7302;
+  --color-bright-sun-700: #b75006;
+  --color-bright-sun-800: #943c0c;
+  --color-bright-sun-900: #7a330d;
+  --color-bright-sun-950: #461902;
+
+  /* Same breakpoints as the React app. The React `md-mx:` style classes are
+     written as Tailwind's built-in `max-md:` variants here. */
+  --breakpoint-xsm: 350px;
+  --breakpoint-xs: 476px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-bs: 900px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  --animate-option: option-in 200ms ease forwards;
+
+  @keyframes option-in {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+}
+
+:root {
+  --ms-50: 246 246 246;
+  --ms-100: 231 231 231;
+  --ms-200: 209 209 209;
+  --ms-300: 176 176 176;
+  --ms-400: 136 136 136;
+  --ms-500: 109 109 109;
+  --ms-600: 93 93 93;
+  --ms-700: 79 79 79;
+  --ms-800: 69 69 69;
+  --ms-900: 61 61 61;
+  --ms-950: 45 45 45;
+}
+
+html.light-theme {
+  --ms-50: 45 45 45;
+  --ms-100: 61 61 61;
+  --ms-200: 69 69 69;
+  --ms-300: 79 79 79;
+  --ms-400: 93 93 93;
+  --ms-500: 109 109 109;
+  --ms-600: 136 136 136;
+  --ms-700: 176 176 176;
+  --ms-800: 209 209 209;
+  --ms-900: 231 231 231;
+  --ms-950: 246 246 246;
+}
+
+/* Unlayered on purpose: must beat Mantine's (layered) body background. */
+body {
+  background-color: rgb(var(--ms-950));
+  color: rgb(var(--ms-100));
+  font-family: var(--font-sans);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@layer base {
+
+  /* Rich text (job descriptions) keeps list bullets and spacing. */
+  .rich-text ul,
+  .rich-text ol {
+    list-style: revert;
+    padding-left: 1.25em;
+  }
+  .rich-text h4 { font-size: 1.25rem; font-weight: 600; margin: 1.25rem 0; color: rgb(var(--ms-200)); }
+  .rich-text p, .rich-text li { font-size: 0.875rem; color: rgb(var(--ms-300)); }
+  .rich-text p { text-align: justify; }
+  .rich-text li { margin-bottom: 0.25rem; }
+  .rich-text li::marker { color: var(--color-bright-sun-300); }
+  .rich-text a { color: var(--color-bright-sun-400); text-decoration: underline; }
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #ffbd20;
+}
