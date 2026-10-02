@@ -1,0 +1,38 @@
+<header class="flex h-20 w-full items-center justify-between bg-mine-shaft-950 px-6 text-mine-shaft-100" data-aos="zoom-out">
+  <a routerLink="/" class="flex items-center gap-1 text-bright-sun-400" aria-label="JobHook home">
+    <app-icon name="anchor" [size]="32" [stroke]="2.5" />
+    <span class="text-3xl font-semibold max-xs:hidden">JobHook</span>
+  </a>
+
+  <nav class="flex h-full items-center gap-5 text-mine-shaft-300 max-bs:hidden" aria-label="Main">
+    @for (link of links(); track link.url) {
+      <a
+        [routerLink]="link.url"
+        routerLinkActive="border-bright-sun-400! text-bright-sun-400"
+        class="flex h-full items-center border-t-[3px] border-transparent hover:text-mine-shaft-200"
+      >
+        {{ link.name }}
+      </a>
+    }
+  </nav>
+
+  <div class="flex items-center gap-3">
+    @if (session.isLoggedIn()) {
+      <app-profile-menu />
+      <app-notification-menu />
+    } @else {
+      <a routerLink="/login" class="btn btn-subtle">Login</a>
+    }
+    <button type="button" class="icon-btn text-mine-shaft-100 bs:hidden" aria-label="Toggle navigation" (click)="menuOpen.set(true)">
+      <app-icon name="menu-2" [size]="26" />
+    </button>
+  </div>
+</header>
+
+<app-drawer [(open)]="menuOpen" [width]="280">
+  <nav class="flex flex-col items-center gap-6" aria-label="Mobile">
+    @for (link of links(); track link.url) {
+      <button type="button" class="text-xl hover:text-bright-sun-400" (click)="go(link.url)">{{ link.name }}</button>
+    }
+  </nav>
+</app-drawer>
