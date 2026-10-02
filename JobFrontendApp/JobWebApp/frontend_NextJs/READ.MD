@@ -1,1 +1,0 @@
-## ========== this folder container nextJs code  ========
