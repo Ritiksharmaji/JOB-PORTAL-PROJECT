@@ -1,0 +1,265 @@
+{
+  "info": {
+    "name": "Jobify — Job Portal API",
+    "_postman_id": "b1f7a2c4-1f2a-4d3e-9a10-jobify00api1",
+    "description": "Spring Boot backend for the Jobify job portal.\n\nUsage:\n1. Set the `baseUrl` collection variable (default http://localhost:8080).\n2. Run **Auth > Login** — the test script auto-saves the JWT into the `token` variable.\n3. All protected requests send `Authorization: Bearer {{token}}` automatically.\n\nEnums: accountType = APPLICANT|EMPLOYER|ADMIN, jobStatus = ACTIVE|DRAFT|CLOSED, applicationStatus = APPLIED|INTERVIEWING|OFFERED|REJECTED. Binary fields (resume, picture) are base64 strings. Errors return HTTP 400/500 with { errorMessage }.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "userId", "value": "1" },
+    { "key": "profileId", "value": "1" },
+    { "key": "jobId", "value": "1" },
+    { "key": "applicantId", "value": "2" },
+    { "key": "email", "value": "applicant@example.com" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (POST /auth/login)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Save the JWT so every protected request can use it.",
+                  "try {",
+                  "  var data = pm.response.json();",
+                  "  if (data && data.jwt) {",
+                  "    pm.collectionVariables.set('token', data.jwt);",
+                  "    console.log('Saved JWT to {{token}}');",
+                  "  }",
+                  "} catch (e) { console.log('No JSON body / jwt'); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"applicant@example.com\",\n  \"password\": \"Password@123\"\n}"
+            },
+            "description": "Authenticate and return { jwt }. Public. The test script saves the token automatically."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Register (POST /users/register)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/register", "host": ["{{baseUrl}}"], "path": ["users", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Applicant\",\n  \"email\": \"applicant@example.com\",\n  \"password\": \"Password@123\",\n  \"accountType\": \"APPLICANT\"\n}"
+            },
+            "description": "Create a user (and auto-create a linked profile). Public. accountType = APPLICANT | EMPLOYER. Password regex: 8-15 chars incl. upper, lower, digit, special."
+          }
+        },
+        {
+          "name": "Register Employer (POST /users/register)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/register", "host": ["{{baseUrl}}"], "path": ["users", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sam Employer\",\n  \"email\": \"employer@example.com\",\n  \"password\": \"Password@123\",\n  \"accountType\": \"EMPLOYER\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Send OTP (POST /users/sendOtp/{email})",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/users/sendOtp/{{email}}", "host": ["{{baseUrl}}"], "path": ["users", "sendOtp", "{{email}}"] },
+            "description": "Email a 6-digit OTP for password reset. Public. OTP expires after 5 minutes."
+          }
+        },
+        {
+          "name": "Verify OTP (GET /users/verifyOtp/{email}/{otp})",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/users/verifyOtp/{{email}}/123456", "host": ["{{baseUrl}}"], "path": ["users", "verifyOtp", "{{email}}", "123456"] },
+            "description": "Verify the 6-digit OTP. Public. Replace 123456 with the real code."
+          }
+        },
+        {
+          "name": "Change Password (POST /users/changePass)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/changePass", "host": ["{{baseUrl}}"], "path": ["users", "changePass"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"applicant@example.com\",\n  \"password\": \"NewPass@123\"\n}"
+            },
+            "description": "Set a new password after OTP verification. Public."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jobs",
+      "item": [
+        {
+          "name": "Get All Jobs (GET /jobs/getAll)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/jobs/getAll", "host": ["{{baseUrl}}"], "path": ["jobs", "getAll"] },
+            "description": "List all jobs. Requires auth."
+          }
+        },
+        {
+          "name": "Get Job (GET /jobs/get/{id})",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/jobs/get/{{jobId}}", "host": ["{{baseUrl}}"], "path": ["jobs", "get", "{{jobId}}"] },
+            "description": "Get a single job by id. Requires auth."
+          }
+        },
+        {
+          "name": "Post Job (POST /jobs/post)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/jobs/post", "host": ["{{baseUrl}}"], "path": ["jobs", "post"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 0,\n  \"jobTitle\": \"Backend Developer\",\n  \"company\": \"Google\",\n  \"about\": \"Build scalable backend systems.\",\n  \"experience\": \"Intermediate\",\n  \"jobType\": \"Full-Time\",\n  \"location\": \"Bangalore\",\n  \"packageOffered\": 38,\n  \"description\": \"<p>Design and build APIs.</p>\",\n  \"skillsRequired\": [\"Java\", \"Spring Boot\", \"MongoDB\"],\n  \"jobStatus\": \"ACTIVE\",\n  \"postedBy\": {{userId}}\n}"
+            },
+            "description": "Create or update a job (id=0 creates). Requires auth. Use jobStatus DRAFT to save a draft, CLOSED to close."
+          }
+        },
+        {
+          "name": "Apply to Job (POST /jobs/apply/{id})",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/jobs/apply/{{jobId}}", "host": ["{{baseUrl}}"], "path": ["jobs", "apply", "{{jobId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"applicantId\": {{userId}},\n  \"name\": \"Jane Applicant\",\n  \"email\": \"applicant@example.com\",\n  \"phone\": 5550192,\n  \"website\": \"https://jane.dev\",\n  \"resume\": \"<base64-encoded-pdf>\",\n  \"coverLetter\": \"I am a great fit because...\"\n}"
+            },
+            "description": "Apply to a job. Requires auth. resume is a base64 string (no data: prefix)."
+          }
+        },
+        {
+          "name": "Jobs Posted By (GET /jobs/postedBy/{id})",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/jobs/postedBy/{{userId}}", "host": ["{{baseUrl}}"], "path": ["jobs", "postedBy", "{{userId}}"] },
+            "description": "All jobs posted by an employer (userId). Requires auth."
+          }
+        },
+        {
+          "name": "Application History (GET /jobs/history/{id}/{status})",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/jobs/history/{{userId}}/APPLIED", "host": ["{{baseUrl}}"], "path": ["jobs", "history", "{{userId}}", "APPLIED"] },
+            "description": "Applicant's jobs by application status (APPLIED|INTERVIEWING|OFFERED|REJECTED). Requires auth."
+          }
+        },
+        {
+          "name": "Change Application Status (POST /jobs/changeAppStatus)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/jobs/changeAppStatus", "host": ["{{baseUrl}}"], "path": ["jobs", "changeAppStatus"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{jobId}},\n  \"applicantId\": {{applicantId}},\n  \"applicationStatus\": \"INTERVIEWING\",\n  \"interviewTime\": \"2026-07-01T10:30:00\"\n}"
+            },
+            "description": "Employer moves an applicant through the pipeline. id = jobId. Requires auth. For OFFERED/REJECTED omit interviewTime."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profiles",
+      "item": [
+        {
+          "name": "Get Profile (GET /profiles/get/{id})",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/profiles/get/{{profileId}}", "host": ["{{baseUrl}}"], "path": ["profiles", "get", "{{profileId}}"] },
+            "description": "Get a profile by id. Requires auth."
+          }
+        },
+        {
+          "name": "Get All Profiles (GET /profiles/getAll)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/profiles/getAll", "host": ["{{baseUrl}}"], "path": ["profiles", "getAll"] },
+            "description": "List all profiles (Find Talent). Requires auth."
+          }
+        },
+        {
+          "name": "Update Profile (PUT /profiles/update)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/profiles/update", "host": ["{{baseUrl}}"], "path": ["profiles", "update"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{profileId}},\n  \"name\": \"Jane Applicant\",\n  \"email\": \"applicant@example.com\",\n  \"jobTitle\": \"Backend Developer\",\n  \"company\": \"Google\",\n  \"location\": \"Bangalore\",\n  \"about\": \"Backend engineer focused on scalable APIs.\",\n  \"picture\": \"\",\n  \"totalExp\": 4,\n  \"skills\": [\"Java\", \"Spring Boot\", \"MongoDB\"],\n  \"experiences\": [\n    {\n      \"title\": \"Software Engineer\",\n      \"company\": \"Google\",\n      \"location\": \"Bangalore\",\n      \"startDate\": \"2022-04-01T00:00:00\",\n      \"endDate\": \"2026-01-01T00:00:00\",\n      \"working\": true,\n      \"description\": \"Built backend services.\"\n    }\n  ],\n  \"certifications\": [\n    {\n      \"name\": \"Professional Cloud Architect\",\n      \"issuer\": \"Google\",\n      \"issueDate\": \"2023-08-01T00:00:00\",\n      \"certificateId\": \"GCP-123\"\n    }\n  ],\n  \"savedJobs\": []\n}"
+            },
+            "description": "Update the full profile (all client profile edits go through this). Requires auth. picture is a base64 string."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get Notifications (GET /notification/get/{userId})",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/notification/get/{{userId}}", "host": ["{{baseUrl}}"], "path": ["notification", "get", "{{userId}}"] },
+            "description": "Unread notifications for a user. Requires auth."
+          }
+        },
+        {
+          "name": "Mark Read (PUT /notification/read/{id})",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/notification/read/1", "host": ["{{baseUrl}}"], "path": ["notification", "read", "1"] },
+            "description": "Mark a notification as read. Requires auth. Replace 1 with the notification id."
+          }
+        }
+      ]
+    }
+  ]
+}
