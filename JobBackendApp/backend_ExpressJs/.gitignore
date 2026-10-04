@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+*.log
+
+# Local env (secrets) — commit only .env.example
+.env
+.env.*
+!.env.example
