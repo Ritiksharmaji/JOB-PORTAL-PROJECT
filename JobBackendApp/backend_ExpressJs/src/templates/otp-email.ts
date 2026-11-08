@@ -29,7 +29,7 @@ export function otpEmailTemplate(otp: string, name: string): string {
       <p>This OTP code is valid for 5 minutes. If you did not request this, please ignore this email.</p>
       <p>Thank you for using our service!</p>
     </div>
-    <div class="footer"><p>&copy;${new Date().getFullYear()} JobHook . All rights reserved.</p></div>
+    <div class="footer"><p>&copy;${new Date().getFullYear()} JobPilot AI. All rights reserved.</p></div>
   </div>
 </body>
 </html>`;
