@@ -1,0 +1,19 @@
+# Job portal API on the shared Lightsail server (music-app, 13.207.89.19).
+# It joins the music app's Docker network so that server's Caddy can serve it over
+# HTTPS at https://jobs-api.onekampus.com (see the Caddyfile block in DEPLOY-LIGHTSAIL.md).
+services:
+  job-api:
+    build: .
+    env_file: .env # SPRING_DATA_MONGODB_URI, JWT_SECRET, MAIL_USERNAME, MAIL_PASSWORD
+    environment:
+      PORT: "8080"
+    restart: unless-stopped
+    mem_limit: 420m
+    networks:
+      default:
+        aliases: [job-api]
+
+networks:
+  default:
+    name: deploy_default
+    external: true

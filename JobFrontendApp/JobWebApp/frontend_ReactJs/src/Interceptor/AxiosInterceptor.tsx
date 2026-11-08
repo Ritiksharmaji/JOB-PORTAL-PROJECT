@@ -2,9 +2,10 @@ import axios, { InternalAxiosRequestConfig } from "axios";
 import { removeUser } from "../Slices/UserSlice";
 import { removeJwt } from "../Slices/JwtSlice";
 
+// API base URL: set REACT_APP_API_URL in .env.local to use another backend
+// (e.g. http://localhost:8080 for local development).
 const axiosInstance = axios.create({
-    // baseURL: 'http://localhost:8080'
-     baseURL: 'https://job-portal-project-1-f7oc.onrender.com'
+    baseURL: process.env.REACT_APP_API_URL || 'https://jobs-api.onekampus.com'
 });
 
 axiosInstance.interceptors.request.use(
