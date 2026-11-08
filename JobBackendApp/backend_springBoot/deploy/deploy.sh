@@ -1,25 +1,32 @@
 #!/usr/bin/env bash
-# Build the Spring Boot jar locally and (re)start the API on the Lightsail server.
-# Usage (from backend_springBoot/):  deploy/deploy.sh
-# Env overrides: DEPLOY_HOST (default ubuntu@13.207.89.19), SSH_KEY (default ~/.ssh/music-app-lightsail.pem)
+# Build and (re)deploy the job portal on the shared Lightsail server (apps-server, 16.4.118.190).
+# Usage (from backend_springBoot/):  deploy/deploy.sh [api|web|all]   (default: api)
+#   api -> https://jobs-api.onekampus.com   (container job-api in /opt/apps/compose.yml)
+#   web -> https://jobpilotai.site          (React build served by Caddy from /opt/apps/sites/jobpilotai)
+# Env overrides: DEPLOY_HOST (default ubuntu@16.4.118.190), SSH_KEY (default ~/.ssh/apps-server-lightsail.pem)
 set -euo pipefail
-
-HOST="${DEPLOY_HOST:-ubuntu@13.207.89.19}"
-KEY="${SSH_KEY:-$HOME/.ssh/music-app-lightsail.pem}"
-REMOTE=/opt/job-portal
+WHAT="${1:-api}"
+HOST="${DEPLOY_HOST:-ubuntu@16.4.118.190}"
+KEY="${SSH_KEY:-$HOME/.ssh/apps-server-lightsail.pem}"
+REMOTE=/opt/apps
 cd "$(dirname "$0")/.."
 
-echo "==> Building jar"
-if command -v mvn >/dev/null; then MVN=mvn; else
-  MVN=$(ls -d "$HOME"/.m2/wrapper/dists/apache-maven-*/*/bin/mvn 2>/dev/null | tail -1)
+if [[ "$WHAT" == api || "$WHAT" == all ]]; then
+  echo "==> Building jar"
+  if command -v mvn >/dev/null; then MVN=mvn; else
+    MVN=$(ls -d "$HOME"/.m2/wrapper/dists/apache-maven-*/*/bin/mvn 2>/dev/null | tail -1)
+  fi
+  "$MVN" -q clean package -DskipTests
+  scp -i "$KEY" deploy/Dockerfile "$HOST:$REMOTE/job-api/Dockerfile"
+  scp -i "$KEY" target/JobPortal-0.0.1-SNAPSHOT.jar "$HOST:$REMOTE/job-api/JobPortal.jar"
+  ssh -i "$KEY" "$HOST" "cd $REMOTE && test -f job-api/.env || { echo 'Missing $REMOTE/job-api/.env'; exit 1; }; docker compose up -d --build job-api && docker image prune -f >/dev/null"
+  echo "==> API done: https://jobs-api.onekampus.com"
 fi
-"$MVN" -q clean package -DskipTests
 
-echo "==> Uploading to $HOST:$REMOTE"
-ssh -i "$KEY" "$HOST" "sudo mkdir -p $REMOTE && sudo chown \$USER $REMOTE"
-scp -i "$KEY" deploy/Dockerfile deploy/docker-compose.yml "$HOST:$REMOTE/"
-scp -i "$KEY" target/JobPortal-0.0.1-SNAPSHOT.jar "$HOST:$REMOTE/JobPortal.jar"
-
-echo "==> Restarting container"
-ssh -i "$KEY" "$HOST" "cd $REMOTE && test -f .env || { echo 'Missing $REMOTE/.env'; exit 1; }; docker compose up -d --build && docker image prune -f >/dev/null"
-echo "==> Done: https://jobs-api.onekampus.com"
+if [[ "$WHAT" == web || "$WHAT" == all ]]; then
+  echo "==> Building web"
+  WEB=../../JobFrontendApp/JobWebApp/frontend_ReactJs
+  (cd "$WEB" && npm run build >/dev/null)
+  rsync -az --delete -e "ssh -i $KEY" "$WEB/build/" "$HOST:$REMOTE/sites/jobpilotai/"
+  echo "==> Web done: https://jobpilotai.site"
+fi
