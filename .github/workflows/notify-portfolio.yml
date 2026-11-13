@@ -1,0 +1,47 @@
+# Sends this project's latest numbers and "What's new" to the portfolio
+# (Ritiksharmaji/resume-portfolio) whenever main changes.
+#
+# It runs here, in this repo, so it reads this repo's own code — no read token needed.
+# The counting script comes from the public portfolio repo (scripts/sync/collect.mts).
+# Needs one secret in this repo: PORTFOLIO_DISPATCH_TOKEN.
+name: Notify portfolio
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Get the portfolio's sync scripts (public repo)
+        run: git clone --depth 1 https://github.com/Ritiksharmaji/resume-portfolio.git "$RUNNER_TEMP/portfolio"
+
+      - name: Count facts and collect What's new
+        run: |
+          npx --yes tsx@4.23.15 "$RUNNER_TEMP/portfolio/scripts/sync/collect.mts" \
+            --repo "$GITHUB_REPOSITORY" --dir . --after "$GITHUB_SHA" \
+            --state "$RUNNER_TEMP/portfolio/data/sync-state.json" \
+            --out "$RUNNER_TEMP/payload.json"
+
+      - name: Send to the portfolio
+        env:
+          GH_TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then echo "::warning::PORTFOLIO_DISPATCH_TOKEN is not set — skipping."; exit 0; fi
+          if [ ! -s "$RUNNER_TEMP/payload.json" ]; then echo "Portfolio already up to date."; exit 0; fi
+          jq '{event_type: "project-updated", client_payload: .}' "$RUNNER_TEMP/payload.json" \
+            | gh api repos/Ritiksharmaji/resume-portfolio/dispatches --input -
+          echo "Sent. Watch it at https://github.com/Ritiksharmaji/resume-portfolio/actions"
