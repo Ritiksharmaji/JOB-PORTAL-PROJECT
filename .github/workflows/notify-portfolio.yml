@@ -1,0 +1,23 @@
+# Tells the portfolio (Ritiksharmaji/resume-portfolio) that main changed,
+# so it can summarize the new work and update this project's page.
+# Needs the secret PORTFOLIO_DISPATCH_TOKEN in this repo.
+name: Notify portfolio
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send repository_dispatch to resume-portfolio
+        env:
+          GH_TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then echo "::warning::PORTFOLIO_DISPATCH_TOKEN is not set — skipping."; exit 0; fi
+          jq -n --arg repo "$GITHUB_REPOSITORY" --arg before "$BEFORE" --arg after "$AFTER" \
+            '{event_type: "project-updated", client_payload: {repo: $repo, before: $before, after: $after}}' \
+          | gh api repos/Ritiksharmaji/resume-portfolio/dispatches --input -
