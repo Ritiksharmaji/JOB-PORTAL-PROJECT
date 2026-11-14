@@ -1,4 +1,4 @@
-# Job Portal (JobPilot AI)
+# Job Portal (JobPilot)
 
 Full-stack job portal: React.js web app + Spring Boot API + MongoDB Atlas, plus Angular, Next.js and React Native clients.
 

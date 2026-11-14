@@ -25,7 +25,7 @@ final class OtpEmail {
 				<div class="otp">%s</div>
 				<p>This OTP code is valid for 5 minutes. If you did not request this, please ignore this email.</p>
 				<p>Thank you for using our service!</p></div>
-				<div class="footer"><p>&copy;%d JobPilot AI. All rights reserved.</p></div>
+				<div class="footer"><p>&copy;%d JobPilot. All rights reserved.</p></div>
 				</div></body></html>
 				""".formatted(HtmlUtils.htmlEscape(name), otp, Year.now().getValue());
 	}

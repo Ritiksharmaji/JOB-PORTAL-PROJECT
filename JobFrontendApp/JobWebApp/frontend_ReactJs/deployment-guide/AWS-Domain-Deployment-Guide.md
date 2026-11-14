@@ -1,4 +1,4 @@
-# JobPilotAI — Custom Domain, HTTPS & AWS Billing Guide
+# JobPilot — Custom Domain, HTTPS & AWS Billing Guide
 
 - **Project:** JobHook React job app (`frontend_ReactJs`)
 - **Domain:** `jobpilotai.site` (bought from GoDaddy)

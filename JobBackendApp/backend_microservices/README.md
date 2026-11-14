@@ -1,4 +1,4 @@
-# JobPilot AI — Microservices
+# JobPilot — Microservices
 
 The job portal's Spring Boot monolith ([`../backend_springBoot`](../backend_springBoot), still the live API) split into
 microservices. **Same URLs and JSON**, so the React, Angular, Next.js and mobile apps work unchanged: only their API base

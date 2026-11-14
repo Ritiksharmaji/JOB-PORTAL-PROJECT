@@ -9,7 +9,7 @@ const Footer = () => {
         <div data-aos="fade-up"  data-aos-offset="0"  className="w-1/4 sm-mx:w-1/3   xs-mx:w-1/2 xsm-mx:w-full flex flex-col gap-4">
             <div className="flex gap-1 items-center text-bright-sun-400">
                 <IconPlaneTilt className="h-6 w-6" stroke={2.5} />
-                <div className="text-xl font-semibold">JobPilot AI</div>
+                <div className="text-xl font-semibold">JobPilot</div>
             </div>
             <div className="text-sm text-mine-shaft-300">Job portal with user profiles, skill updates, certifications, work experience and admin job postings.</div>
         </div>
@@ -24,7 +24,7 @@ const Footer = () => {
     </div>
     <Divider/>
     <div data-aos="flip-left"  data-aos-offset="0" className="font-medium text-center p-5">
-        © {new Date().getFullYear()} JobPilot AI. All rights reserved.
+        © {new Date().getFullYear()} JobPilot. All rights reserved.
     </div>
     </div>:<></>
 }
