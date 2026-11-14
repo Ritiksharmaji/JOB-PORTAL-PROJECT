@@ -34,6 +34,7 @@ messages:
   USER_NOT_FOUND: User is not registered.
   INVALID_CREDENTIALS: Invalid Credentials.
   PROFILE_NOT_FOUND: Profile not found.
+  PROFILE_NOT_YOURS: You can only edit your own profile.
   OTP_NOT_FOUND: OTP has been expired.
   OTP_INCORRECT: OTP is incorrect.
   OTP_NOT_VERIFIED: Verify the OTP sent to your email before changing the password.

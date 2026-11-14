@@ -32,6 +32,7 @@
 		<module>infra/api-gateway</module>
 		<!-- business services -->
 		<module>services/user-service</module>
+		<module>services/profile-service</module>
 	</modules>
 
 	<properties>
