@@ -26,6 +26,10 @@
 		<module>libs/contracts</module>
 		<module>libs/jwt</module>
 		<module>libs/clients/profile-client</module>
+		<!-- platform -->
+		<module>infra/discovery-server</module>
+		<module>infra/config-server</module>
+		<module>infra/api-gateway</module>
 	</modules>
 
 	<properties>

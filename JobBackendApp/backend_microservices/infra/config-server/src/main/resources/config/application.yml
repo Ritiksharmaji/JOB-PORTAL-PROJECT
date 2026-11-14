@@ -1,0 +1,50 @@
+# Shared by all services. Every value can be overridden with an environment variable.
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
+
+spring:
+  data:
+    mongodb:
+      # One server, one database per service (set in each service's file).
+      # For MongoDB Atlas set MONGODB_URI to the cluster URI.
+      uri: ${MONGODB_URI:mongodb://localhost:27017}
+      auto-index-creation: true
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+jobportal:
+  jwt:
+    # Same default as the monolith so tokens are interchangeable in development. Set JWT_SECRET in production.
+    secret: ${JWT_SECRET:afafasfafafasfasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwavfsfarvf}
+
+management:
+  endpoints.web.exposure.include: health,info
+  endpoint.health.show-details: always
+
+# Error texts (same as the monolith's application.properties)
+messages:
+  USER_FOUND: Email registered already.
+  USER_NOT_FOUND: User is not registered.
+  INVALID_CREDENTIALS: Invalid Credentials.
+  PROFILE_NOT_FOUND: Profile not found.
+  OTP_NOT_FOUND: OTP has been expired.
+  OTP_INCORRECT: OTP is incorrect.
+  OTP_NOT_VERIFIED: Verify the OTP sent to your email before changing the password.
+  JOB_NOT_FOUND: Job not found.
+  JOB_APPLIED_ALREADY: Already Applied to this Job.
+  APPLICANT_NOT_FOUND: Applicant not found.
+  NOTIFICATION_NOT_FOUND: No Notitication found
+  PROFILE_SERVICE_UNAVAILABLE: Sign-up is temporarily unavailable. Please try again in a minute.
+  user.name.absent: Name is required.
+  user.email.absent: Email is required.
+  user.email.invalid: Email is invalid.
+  user.password.absent: Password is required.
+  user.password.invalid: Password must be 8-15 characters with an uppercase letter, a lowercase letter, a number and a special character.
+  otp.invalid: OTP must be 6 digits.

@@ -1,0 +1,33 @@
+server:
+  port: 8080
+spring:
+  cloud:
+    gateway:
+      # Same URLs as the monolith, so the React app only changes its base URL.
+      # /internal/** is deliberately not routed: service-to-service only.
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/auth/**,/users/**
+        - id: profile-service
+          uri: lb://profile-service
+          predicates:
+            - Path=/profiles/**
+        - id: job-service
+          uri: lb://job-service
+          predicates:
+            - Path=/jobs/**
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/notification/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origin-patterns: ${CORS_ORIGINS:*}
+            allowed-methods: "*"
+            allowed-headers: "*"
+            max-age: 3600
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
