@@ -11,10 +11,11 @@ import { Platform } from 'react-native';
 // a plain editable constant. Leave it null to use the emulator/simulator fallbacks below.
 const MANUAL_API_URL = null;
 
+// Live oneKampus Jobs API (Spring Boot on AWS Lightsail), same as the web app.
 const FALLBACK_API_URL = Platform.select({
-  android: 'https://job-portal-project-1-f7oc.onrender.com', // deployed backend (Render)
-  ios: 'https://job-portal-project-1-f7oc.onrender.com', // deployed backend (Render)
-  default: 'https://job-portal-project-1-f7oc.onrender.com',
+  android: 'https://jobs-api.onekampus.com',
+  ios: 'https://jobs-api.onekampus.com',
+  default: 'https://jobs-api.onekampus.com',
 });
 
 export const API_URL = MANUAL_API_URL || FALLBACK_API_URL;

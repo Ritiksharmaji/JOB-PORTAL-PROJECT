@@ -9,7 +9,7 @@ import { logoFor } from '../assets';
 import { AppContext } from '../context/AppContext';
 import JobCard from '../components/JobCard';
 import { getAllJobs } from '../services/jobService';
-import { pkgText, timeAgo } from '../utils/format';
+import { formatInterview, pkgText, timeAgo } from '../utils/format';
 
 const STATUS_STYLE = (colors, st) => {
   switch (st) {
@@ -103,6 +103,12 @@ export default function MyJobsScreen({ navigation }) {
                       </View>
                       <Text style={[styles.badge, { color: st.color, backgroundColor: st.bg }]}>{st.label}</Text>
                     </View>
+                    {app.applicationStatus === 'INTERVIEWING' && !!app.interviewTime && (
+                      <View style={styles.interviewRow}>
+                        <Ionicons name="calendar-outline" size={15} color={colors.accent} />
+                        <Text style={styles.interviewTxt}>Interview: {formatInterview(app.interviewTime)}</Text>
+                      </View>
+                    )}
                     <View style={styles.divider} />
                     <View style={styles.appliedFooter}>
                       <Text style={styles.appliedDate}>Applied {timeAgo(app.timestamp)}</Text>
@@ -138,6 +144,8 @@ export default function MyJobsScreen({ navigation }) {
 }
 
 const makeStyles = (colors) => StyleSheet.create({
+  interviewRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10 },
+  interviewTxt: { fontFamily: font.medium, fontSize: 12.5, color: colors.text },
   safe: { flex: 1, backgroundColor: colors.bg },
   body: { paddingHorizontal: 20, paddingBottom: 28, paddingTop: 10 },
   title: { fontFamily: font.bold, fontSize: 22, color: colors.text, paddingTop: 6 },

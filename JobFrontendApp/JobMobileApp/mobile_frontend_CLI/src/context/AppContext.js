@@ -34,6 +34,21 @@ const decodeUser = (jwt) => {
   return { ...decoded, email: decoded.sub };
 };
 
+/**
+ * Returns requireLogin(navigation, action): runs `action` when signed in, otherwise opens Login.
+ * After signing in, Login goes back to the screen that asked, so the visitor can finish what they started.
+ */
+export const useRequireLogin = () => {
+  const { isSignedIn } = React.useContext(AppContext);
+  return (navigation, action) => {
+    if (!isSignedIn) {
+      navigation.navigate('Login');
+      return;
+    }
+    action?.();
+  };
+};
+
 export function AppProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
@@ -41,7 +56,8 @@ export function AppProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [historyTab, setHistoryTab] = useState('applied');
 
-  const role = user?.accountType === 'EMPLOYER' ? 'employer' : 'applicant';
+  // 'guest' = not signed in: can browse jobs; actions ask to sign in (same as the web app).
+  const role = !user ? 'guest' : user.accountType === 'EMPLOYER' ? 'employer' : 'applicant';
 
   // Avoid duplicate logout calls from the 401 interceptor.
   const loggingOut = useRef(false);

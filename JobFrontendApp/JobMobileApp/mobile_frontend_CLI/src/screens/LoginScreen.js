@@ -7,6 +7,7 @@ import { useTheme } from '../context/ThemeContext';
 import { AppContext } from '../context/AppContext';
 import Field from '../components/Field';
 import ResetPasswordModal from '../components/ResetPasswordModal';
+import BrandLogo from '../components/BrandLogo';
 import { errMessage } from '../api/client';
 import { validateLogin } from '../utils/validation';
 
@@ -27,7 +28,8 @@ export default function LoginScreen({ navigation }) {
     setLoading(true);
     try {
       await login(email.trim(), password);
-      // On success the navigator swaps to the authenticated stack automatically.
+      // Back to where the visitor was (e.g. the job they wanted to apply for); tabs switch to their role.
+      if (navigation.canGoBack()) navigation.goBack();
     } catch (e) {
       Alert.alert('Login failed', errMessage(e));
     } finally {
@@ -38,13 +40,13 @@ export default function LoginScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
-        <View style={styles.brandRow}>
-          <View style={styles.brandIcon}>
-            <Ionicons name="briefcase" size={22} color={colors.onAccent} />
-          </View>
-          <Text style={styles.brand}>
-            Job<Text style={{ color: colors.accent }}>ify</Text>
-          </Text>
+        <View style={[styles.brandRow, { justifyContent: 'space-between' }]}>
+          <BrandLogo />
+          {navigation.canGoBack() && (
+            <TouchableOpacity onPress={() => navigation.goBack()} accessibilityLabel="Close" hitSlop={12}>
+              <Ionicons name="close" size={24} color={colors.textDim} />
+            </TouchableOpacity>
+          )}
         </View>
 
         <View style={{ marginTop: 46 }}>

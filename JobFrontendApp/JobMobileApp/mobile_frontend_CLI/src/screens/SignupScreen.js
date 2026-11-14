@@ -59,7 +59,7 @@ export default function SignupScreen({ navigation }) {
 
         <View style={{ marginTop: 24 }}>
           <Text style={styles.h1}>Create account</Text>
-          <Text style={styles.sub}>Start your journey with Jobify</Text>
+          <Text style={styles.sub}>Start your journey with oneKampus Jobs</Text>
         </View>
 
         <View style={styles.roleRow}>
