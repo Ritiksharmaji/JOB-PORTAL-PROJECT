@@ -40,12 +40,13 @@ const AppRoutes = () => {
         <Route path='/' element={<HomePage />} />
 
         <Route path='/unauthorized' element={<Unauthorized />} />
-        <Route path='/find-jobs' element={<ProtectedRoute allowedRoles={['APPLICANT', 'ADMIN']}><FindJobsPage /></ProtectedRoute>} />
-        <Route path='/jobs/:id' element={<ProtectedRoute allowedRoles={['APPLICANT', 'ADMIN']}><JobPage /></ProtectedRoute>} />
+        {/* Browsing is public; actions inside these pages ask visitors to log in */}
+        <Route path='/find-jobs' element={<FindJobsPage />} />
+        <Route path='/jobs/:id' element={<JobPage />} />
         <Route path='/apply-job/:id' element={<ProtectedRoute allowedRoles={['APPLICANT', 'ADMIN']}><ApplyJobPage /></ProtectedRoute>} />
-        <Route path='/find-talent' element={<ProtectedRoute allowedRoles={['EMPLOYER', 'ADMIN']}><FindTalentPage /></ProtectedRoute>} />
-        <Route path='/talent-profile/:id' element={<ProtectedRoute allowedRoles={['EMPLOYER', 'ADMIN']}><TalentProfilePage /></ProtectedRoute>} />
-        <Route path='/company/:name' element={<ProtectedRoute allowedRoles={['APPLICANT', 'ADMIN']}><CompanyPage /></ProtectedRoute>} />
+        <Route path='/find-talent' element={<FindTalentPage />} />
+        <Route path='/talent-profile/:id' element={<TalentProfilePage />} />
+        <Route path='/company/:name' element={<CompanyPage />} />
         <Route path='/job-history' element={<ProtectedRoute allowedRoles={['APPLICANT', 'ADMIN']}><JobHistoryPage /></ProtectedRoute>} />
         <Route path='/posted-jobs/:id' element={<ProtectedRoute allowedRoles={['EMPLOYER', 'ADMIN']}><PostedJobPage /></ProtectedRoute>} />
         <Route path='/post-job/:id' element={<ProtectedRoute allowedRoles={['EMPLOYER', 'ADMIN']}><PostJobPage /></ProtectedRoute>} />

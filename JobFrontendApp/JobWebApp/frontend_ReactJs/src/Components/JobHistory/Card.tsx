@@ -27,7 +27,7 @@ const Card = (props: any) => {
                 </div>
                 <div className="flex flex-col gap-1">
                     <div className="font-semibold ">{props.jobTitle}</div>
-                    <div className="text-xs text-mine-shaft-300"><Link className="hover:text-mine-shaft-200" to="/company">{props.company}</Link> &bull; {props.applicants?props.applicants.length:0} Applicants</div>
+                    <div className="text-xs text-mine-shaft-300"><Link className="hover:text-mine-shaft-200" to={`/company/${props.company}`}>{props.company}</Link> &bull; {props.applicants?props.applicants.length:0} Applicants</div>
                 </div>
             </div>
             {profile.savedJobs?.includes(props.id) ? <IconBookmarkFilled onClick={handleSaveJob} className="cursor-pointer text-bright-sun-400 " stroke={1.5} /> : <IconBookmark onClick={handleSaveJob} className="cursor-pointer text-mine-shaft-300" stroke={1.5} />}
