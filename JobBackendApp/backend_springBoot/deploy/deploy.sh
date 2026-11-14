@@ -2,7 +2,7 @@
 # Build and (re)deploy the job portal on the shared Lightsail server (apps-server, 16.4.118.190).
 # Usage (from backend_springBoot/):  deploy/deploy.sh [api|web|all]   (default: api)
 #   api -> https://jobs-api.onekampus.com   (container job-api in /opt/apps/compose.yml)
-#   web -> https://jobpilotai.site          (React build served by Caddy from /opt/apps/sites/jobpilotai)
+#   web -> https://jobs.onekampus.com          (React build served by Caddy from /opt/apps/sites/jobpilotai)
 # Env overrides: DEPLOY_HOST (default ubuntu@16.4.118.190), SSH_KEY (default ~/.ssh/apps-server-lightsail.pem)
 set -euo pipefail
 WHAT="${1:-api}"
@@ -28,5 +28,5 @@ if [[ "$WHAT" == web || "$WHAT" == all ]]; then
   WEB=../../JobFrontendApp/JobWebApp/frontend_ReactJs
   (cd "$WEB" && npm run build >/dev/null)
   rsync -az --delete -e "ssh -i $KEY" "$WEB/build/" "$HOST:$REMOTE/sites/jobpilotai/"
-  echo "==> Web done: https://jobpilotai.site"
+  echo "==> Web done: https://jobs.onekampus.com (jobpilotai.site redirects here)"
 fi

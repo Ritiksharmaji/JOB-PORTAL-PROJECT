@@ -1,4 +1,4 @@
-# JobPilot microservices — the whole stack with one command (see scripts/up.sh).
+# oneKampus Jobs microservices — the whole stack with one command (see scripts/up.sh).
 # Only the API gateway (and the Eureka / RabbitMQ dashboards) are published to the host.
 name: jobpilot-microservices
 
