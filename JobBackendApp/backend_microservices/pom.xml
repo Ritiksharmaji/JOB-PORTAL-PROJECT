@@ -33,6 +33,7 @@
 		<!-- business services -->
 		<module>services/user-service</module>
 		<module>services/profile-service</module>
+		<module>services/job-service</module>
 	</modules>
 
 	<properties>
