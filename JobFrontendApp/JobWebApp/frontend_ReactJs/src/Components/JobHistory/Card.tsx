@@ -2,13 +2,17 @@ import { Button, Divider, Text } from "@mantine/core";
 import { IconBookmark, IconBookmarkFilled, IconCalendarMonth, IconClockHour3 } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { timeAgo } from "../../Services/Utilities";
+import { formatInterviewSlot, timeAgo } from "../../Services/Utilities";
 import { useEffect } from "react";
 import { changeProfile } from "../../Slices/ProfileSlice";
 
 const Card = (props: any) => {
     const dispatch=useDispatch();
     const profile=useSelector((state:any)=>state.profile);
+    const user=useSelector((state:any)=>state.user);
+    // This user's own application on the job holds their interview time.
+    const myApplication=props.applicants?.find((a:any)=>user?.id!=null && a.applicantId===user.id);
+    const slot=myApplication?.interviewTime ? formatInterviewSlot(myApplication.interviewTime) : null;
     const handleSaveJob = () => {
         let savedJobs:any=[...profile.savedJobs];
         if(savedJobs.includes(props.id)){
@@ -56,7 +60,8 @@ const Card = (props: any) => {
         </div>
         }
         {props.interviewing &&<div className="flex gap-1 text-sm">
-        <IconCalendarMonth className=" text-bright-sun-400 w-5 h-5" stroke={1.5} /> Sun, 25 August &bull; <span className="text-mine-shaft-400">10 AM - 11 AM</span>
+        <IconCalendarMonth className=" text-bright-sun-400 w-5 h-5" stroke={1.5} />
+        {slot ? <>{slot.day} &bull; <span className="text-mine-shaft-400">{slot.time}</span></> : <span className="text-mine-shaft-400">Interview time to be confirmed</span>}
         </div>}
         <Link  to={`/jobs/${props.id}`}>
         <Button color="brightSun.4" variant="light" fullWidth>View Job</Button>
