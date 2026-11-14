@@ -54,8 +54,24 @@ const openPDF=(base64: string)=>{
     alert('Popup was blocked. Please allow popups for this website.');
   }
 }
+// The API stores interview times in UTC and returns them without a timezone ("2026-12-01T04:30:00").
+// Read such values as UTC so each viewer sees their own local time (10:00 AM in India, not 4:30 AM).
+const parseServerDate=(value:string|Date)=>{
+  if (value instanceof Date) return value;
+  return new Date(/([zZ]|[+-]\d{2}:?\d{2})$/.test(value) ? value : value + 'Z');
+}
+
+/** "Mon, 1 Dec 2026" and "10:00 AM" for an interview slot. */
+const formatInterviewSlot=(value:string|Date)=>{
+  const date = parseServerDate(value);
+  return {
+    day: date.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }),
+    time: date.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase(),
+  };
+}
+
 const formatInterviewTime=(dateString:string)=>{
-  const date = new Date(dateString);
+  const date = parseServerDate(dateString);
 
 const options: Intl.DateTimeFormatOptions = {
   year: 'numeric',
@@ -69,4 +85,4 @@ const options: Intl.DateTimeFormatOptions = {
 return date.toLocaleString('en-US', options);
 }  
 
-  export {formatDate, timeAgo, getBase64, openPDF, formatInterviewTime};
+  export {formatDate, timeAgo, getBase64, openPDF, formatInterviewTime, formatInterviewSlot};
