@@ -3,7 +3,7 @@
 import { Button, Divider, NumberInput, TagsInput, Textarea } from '@mantine/core';
 import { isNotEmpty, useForm } from '@mantine/form';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import SelectInput from '@/components/shared/SelectInput';
 import TextEditor from '@/components/shared/TextEditor';
 import { COMPANY_NAMES, EXPERIENCE_LEVELS, JOB_DESCRIPTION_TEMPLATE, JOB_TITLES, JOB_TYPES, LOCATIONS } from '@/data/options';
@@ -11,7 +11,7 @@ import { getErrorMessage } from '@/lib/api/client';
 import { jobApi } from '@/lib/api/services';
 import { errorNotification, successNotification } from '@/lib/notifications';
 import { useAppStore } from '@/store/app-store-provider';
-import type { JobStatus } from '@/types';
+import type { Job, JobStatus } from '@/types';
 
 interface JobFormValues {
   jobTitle: string;
@@ -45,6 +45,8 @@ export default function PostJobView({ id }: { id: string }) {
   const user = useAppStore((s) => s.user);
   const track = useAppStore((s) => s.track);
   const isEdit = Number(id) !== 0;
+  /** The job being edited — re-sent on save so the backend keeps applicants and postTime. */
+  const loadedJob = useRef<Job | null>(null);
 
   const form = useForm<JobFormValues>({
     mode: 'controlled',
@@ -67,6 +69,7 @@ export default function PostJobView({ id }: { id: string }) {
   const { setValues, reset } = form;
   useEffect(() => {
     window.scrollTo(0, 0);
+    loadedJob.current = null;
     if (!isEdit) {
       reset();
       return;
@@ -75,6 +78,7 @@ export default function PostJobView({ id }: { id: string }) {
     track(jobApi.getJob(id))
       .then((job) => {
         if (!active) return;
+        loadedJob.current = job;
         const { jobTitle, company, experience, jobType, location, packageOffered, skillsRequired, about, description } = job;
         setValues({ jobTitle, company, experience, jobType, location, packageOffered, skillsRequired: skillsRequired ?? [], about, description });
       })
@@ -96,10 +100,12 @@ export default function PostJobView({ id }: { id: string }) {
     try {
       const job = await track(
         jobApi.postJob({
+          ...loadedJob.current,
           ...values,
           packageOffered: Number(values.packageOffered) || 0,
-          id: isEdit ? Number(id) : undefined,
-          postedBy: user.id,
+          // `id: 0` means "create" to the backends; Spring's postJob fails on a missing id.
+          id: isEdit ? Number(id) : 0,
+          postedBy: loadedJob.current?.postedBy ?? user.id,
           jobStatus: status,
         }),
       );

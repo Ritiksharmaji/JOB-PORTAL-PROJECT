@@ -22,7 +22,6 @@ const JobCategory = () => {
                         </div>
                         <div className="text-mine-shaft-100 text-xl sm-mx:text-lg xs-mx:text-base font-semibold">{category.name}</div>
                         <div className="text-sm xs-mx:text-xs  text-center text-mine-shaft-300">{category.desc}</div>
-                        <div className="text-bright-sun-300 text-lg sm-mx:text-base xs-mx:text-sm">{category.jobs}+ new job posted</div>
                     </div>
                 </Carousel.Slide>)
             }

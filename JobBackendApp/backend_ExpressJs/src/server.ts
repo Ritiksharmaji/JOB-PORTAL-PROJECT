@@ -8,7 +8,7 @@ async function main(): Promise<void> {
   await connectDatabase();
 
   const server = createApp().listen(env.port, () => {
-    logger.info(`JobHook Express API listening on http://localhost:${env.port} (${env.nodeEnv})`);
+    logger.info(`JobPilot AI Express API listening on http://localhost:${env.port} (${env.nodeEnv})`);
   });
 
   // Spring: @Scheduled(fixedRate = 60000) removeExpiredOTPs

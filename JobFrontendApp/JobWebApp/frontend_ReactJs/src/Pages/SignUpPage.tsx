@@ -1,4 +1,4 @@
-import { IconAnchor, IconArrowLeft } from "@tabler/icons-react"
+import { IconPlaneTilt, IconArrowLeft } from "@tabler/icons-react"
 import SignUp from "../Components/SignUpLogin/SignUp"
 import Login from "../Components/SignUpLogin/Login";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -14,8 +14,8 @@ const SignUpPage = () => {
 <Login/>
         <div className={`w-1/2 h-[100vh] sm-mx:hidden  sm-mx:min-h-full transition-all duration-1000 flex  items-center  gap-5 justify-center flex-col ${location.pathname=='/signup'?'rounded-r-[200px]':'rounded-l-[200px]'} bg-mine-shaft-900`}>
             <div className="flex gap-1 items-center text-bright-sun-400">
-                <IconAnchor className="h-16 w-16" stroke={2.5} />
-                <div className="text-6xl bs-mx:text-5xl md-mx:text-4xl sm-mx:text-3xl font-semibold">JobHook</div>
+                <IconPlaneTilt className="h-16 w-16" stroke={2.5} />
+                <div className="text-6xl bs-mx:text-5xl md-mx:text-4xl sm-mx:text-3xl font-semibold">JobPilot AI</div>
             </div>
             <div className="text-2xl bs-mx:text-xl md-mx:text-lg text-mine-shaft-200 font-semibold">Find the job made for you</div>
         </div>

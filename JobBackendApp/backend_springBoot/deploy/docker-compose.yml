@@ -1,0 +1,11 @@
+# The job portal now runs as the `job-api` service in the shared server's compose file
+# (/opt/apps/compose.yml on apps-server; source: dabba-platform/deploy/compose.yml).
+# This file is kept only for running the API alone with Docker on your machine.
+services:
+  job-api:
+    build: .
+    env_file: .env # SPRING_DATA_MONGODB_URI, JWT_SECRET, MAIL_USERNAME, MAIL_PASSWORD
+    environment:
+      PORT: "8080"
+    ports: ["8080:8080"]
+    mem_limit: 420m

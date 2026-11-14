@@ -3,7 +3,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { EMPTY, catchError, switchMap } from 'rxjs';
-import { JobStatus } from '../../core/models';
+import { Job, JobStatus } from '../../core/models';
 import { JobApiService } from '../../core/services/api/job-api.service';
 import { ToastService } from '../../core/services/toast.service';
 import { LoadingStore } from '../../core/state/loading.store';
@@ -94,6 +94,8 @@ export class PostJobPage {
   /** Bound from the `:id` route param. "0" means a new job. */
   readonly id = input.required<string>();
   protected readonly isEdit = signal(false);
+  /** The job being edited — re-sent on save so the backend keeps applicants and postTime. */
+  private loadedJob: Job | null = null;
   protected readonly submitted = signal(false);
 
   protected readonly options = {
@@ -122,6 +124,7 @@ export class PostJobPage {
         switchMap((id) => {
           this.submitted.set(false);
           this.isEdit.set(Number(id) !== 0);
+          this.loadedJob = null;
           if (Number(id) === 0) {
             this.form.reset();
             return EMPTY;
@@ -130,7 +133,8 @@ export class PostJobPage {
         }),
         takeUntilDestroyed(),
       )
-      .subscribe((job) =>
+      .subscribe((job) => {
+        this.loadedJob = job;
         this.form.reset({
           jobTitle: job.jobTitle,
           company: job.company,
@@ -141,8 +145,8 @@ export class PostJobPage {
           skillsRequired: job.skillsRequired ?? [],
           about: job.about,
           description: job.description,
-        }),
-      );
+        });
+      });
   }
 
   protected error(name: JobField, label: string): string | null {
@@ -163,9 +167,17 @@ export class PostJobPage {
     if (!user) return;
 
     const value = this.form.getRawValue();
-    const id = Number(this.id()) || undefined;
+    // `id: 0` means "create" to the backends; Spring's postJob fails on a missing id.
+    const id = Number(this.id()) || 0;
     this.jobApi
-      .postJob({ ...value, packageOffered: Number(value.packageOffered ?? 0), id, postedBy: user.id, jobStatus: status })
+      .postJob({
+        ...this.loadedJob,
+        ...value,
+        packageOffered: Number(value.packageOffered ?? 0),
+        id,
+        postedBy: this.loadedJob?.postedBy ?? user.id,
+        jobStatus: status,
+      })
       .pipe(this.loading.track())
       .subscribe({
         next: (job) => {
