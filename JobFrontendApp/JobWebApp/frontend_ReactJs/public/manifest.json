@@ -1,6 +1,6 @@
 {
-  "short_name": "JobPilot AI",
-  "name": "JobPilot AI – Job Portal",
+  "short_name": "JobPilot",
+  "name": "JobPilot – Job Portal",
   "icons": [
     { "src": "favicon.svg", "type": "image/svg+xml", "sizes": "any" },
     { "src": "logo192.png", "type": "image/png", "sizes": "192x192" },
