@@ -4,11 +4,14 @@ import { Link } from "react-router-dom";
 import { timeAgo } from "../../Services/Utilities";
 import { useDispatch, useSelector } from "react-redux";
 import { changeProfile } from "../../Slices/ProfileSlice";
+import { useRequireLogin, useRole } from "../../Services/Access";
 
 const JobCard = (props: any) => {
     const dispatch=useDispatch();
     const profile=useSelector((state:any)=>state.profile);
-    const handleSaveJob = () => {
+    const requireLogin=useRequireLogin();
+    const role=useRole();
+    const handleSaveJob = () => requireLogin(() => {
         let savedJobs:any=profile.savedJobs?[...profile.savedJobs]:[];
         if(savedJobs.includes(props.id)){
             savedJobs=savedJobs.filter((job:any)=>job!=props.id);
@@ -17,7 +20,7 @@ const JobCard = (props: any) => {
         }
         let updatedProfile={...profile,savedJobs:savedJobs};
         dispatch(changeProfile(updatedProfile));
-    }
+    });
     
     return <div data-aos="fade-up"  className="p-4 rounded-xl bg-mine-shaft-900   hover:shadow-[0_0_5px_1px_yellow] !shadow-bright-sun-400  transition duration-300 ease-in-out w-72 sm-mx:w-full flex flex-col gap-3">
         <div className="flex justify-between">
@@ -27,10 +30,10 @@ const JobCard = (props: any) => {
                 </div>
                 <div className="flex flex-col gap-1">
                     <div className="font-semibold ">{props.jobTitle}</div>
-                    <div className="text-xs text-mine-shaft-300"><Link className="hover:text-mine-shaft-200" to="/company">{props.company}</Link> &bull; {props.applicants?props.applicants.length:0} Applicants</div>
+                    <div className="text-xs text-mine-shaft-300"><Link className="hover:text-mine-shaft-200" to={`/company/${props.company}`}>{props.company}</Link> &bull; {props.applicants?props.applicants.length:0} Applicants</div>
                 </div>
             </div>
-            {profile.savedJobs?.includes(props.id) ?<IconBookmarkFilled onClick={handleSaveJob} className="cursor-pointer text-bright-sun-400 " stroke={1.5} />:<IconBookmark onClick={handleSaveJob} className="cursor-pointer hover:text-bright-sun-400 text-mine-shaft-300" stroke={1.5} />
+            {role==="EMPLOYER" ? null : profile?.savedJobs?.includes(props.id) ?<IconBookmarkFilled onClick={handleSaveJob} className="cursor-pointer text-bright-sun-400 " stroke={1.5} />:<IconBookmark onClick={handleSaveJob} className="cursor-pointer hover:text-bright-sun-400 text-mine-shaft-300" stroke={1.5} />
             }
         </div>
         <div className="flex gap-2 flex-wrap">

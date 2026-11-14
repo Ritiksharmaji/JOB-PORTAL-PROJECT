@@ -14,7 +14,7 @@ const CompanyCard=(props:any)=>{
                 <div className="text-xs text-mine-shaft-300">{props.employees} Employees</div>
             </div>
         </div>
-        <Link to="/company">
+        <Link to={`/company/${props.name}`}>
        <ActionIcon variant="subtle" color="brightSun.4" aria-label="Settings"> <IconExternalLink/></ActionIcon></Link>
     </div>
     )

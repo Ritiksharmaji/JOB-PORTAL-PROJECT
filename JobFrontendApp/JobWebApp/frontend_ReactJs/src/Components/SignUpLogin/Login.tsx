@@ -1,7 +1,7 @@
 import { Anchor, Button, Checkbox, LoadingOverlay, PasswordInput, TextInput } from "@mantine/core";
 import { IconAt, IconCheck, IconLock, IconX } from "@tabler/icons-react";
 import { useState } from "react";
-import {  useNavigate } from "react-router-dom";
+import {  useNavigate, useLocation } from "react-router-dom";
 import { loginValidation } from "../../Services/FormValidation";
 import { useDisclosure } from "@mantine/hooks";
 import ResetPassword from "./ResetPassword";
@@ -23,6 +23,8 @@ const Login = () => {
     const [formError, setFormError] = useState<{ [key: string]: string }>(form);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const returnTo: string = (location.state as any)?.from || "/";
     const handleChange = (event: any) => {
         setFormError({...formError, [event.target.name]:""});
         setData({ ...data, [event.target.name]: event.target.value });
@@ -37,13 +39,13 @@ const Login = () => {
         if (valid) {
             setLoading(true);
             loginUser(data).then((res) => {
-                successNotification("Login Successful", "Redirecting to home page...");
+                successNotification("Login Successful", "Welcome back!");
                 dispatch(setJwt(res.jwt));
                 const decoded=jwtDecode(res.jwt);
                 dispatch(setUser({...decoded, email:decoded.sub}));
                 setTimeout(() => {
-                    navigate("/");
-                }, 4000)
+                    navigate(returnTo, { replace: true });
+                }, 800)
             }).catch((err) => {
                 console.log(err);
                     errorNotification("Login Failed", err.response.data.errorMessage);

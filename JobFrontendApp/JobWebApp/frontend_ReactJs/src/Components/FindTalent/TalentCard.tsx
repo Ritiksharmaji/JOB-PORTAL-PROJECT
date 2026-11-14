@@ -8,6 +8,7 @@ import { getProfile } from "../../Services/ProfileService";
 import { formatInterviewTime, openPDF } from "../../Services/Utilities";
 import { changeAppStatus } from "../../Services/JobService";
 import { errorNotification, successNotification } from "../../Services/NotificationService";
+import { useRequireLogin } from "../../Services/Access";
 
 const TalentCard = (props: any) => {
     const {id}=useParams();
@@ -17,6 +18,11 @@ const TalentCard = (props: any) => {
     const [date, setDate] = useState<Date|null>(null);
     const [time, setTime] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
+    const requireLogin = useRequireLogin();
+    // "Message" opens the user's email app; visitors are asked to log in first (emails are hidden from them)
+    const handleMessage = () => requireLogin(() => {
+        if (profile?.email) window.location.href = `mailto:${profile.email}`;
+    });
     const handleOffer = (status:string) => {
         let interview:any={id, applicantId:profile?.id, applicationStatus:status};
         if(status=="INTERVIEWING"){
@@ -85,7 +91,7 @@ const TalentCard = (props: any) => {
                     </Link>
 
                     <div>
-                        {props.posted ? <Button color="brightSun.4" variant="light" onClick={open} rightSection={<IconCalendarMonth className="w-5 h-5" />} fullWidth>Schedule</Button> : <Button color="brightSun.4" variant="light" fullWidth>Message</Button>}
+                        {props.posted ? <Button color="brightSun.4" variant="light" onClick={open} rightSection={<IconCalendarMonth className="w-5 h-5" />} fullWidth>Schedule</Button> : <Button onClick={handleMessage} color="brightSun.4" variant="light" fullWidth>Message</Button>}
                     </div>
                 </>
             }{

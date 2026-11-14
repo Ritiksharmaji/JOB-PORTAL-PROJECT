@@ -9,10 +9,16 @@ import { getProfile } from "../../Services/ProfileService";
 import { useMediaQuery } from "@mantine/hooks";
 import { useDispatch } from "react-redux";
 import { hideOverlay, showOverlay } from "../../Slices/OverlaySlice";
+import { useRequireLogin } from "../../Services/Access";
 
 const Profile = () => {
     const { id } = useParams();
     const [profile, setProfile] = useState<any>(null);
+    const requireLogin = useRequireLogin();
+    // "Message" opens the user's email app; visitors are asked to log in first (emails are hidden from them)
+    const handleMessage = () => requireLogin(() => {
+        if (profile?.email) window.location.href = `mailto:${profile.email}`;
+    });
     const matches = useMediaQuery('(max-width: 475px)');
 
     const dispatch=useDispatch();
@@ -36,7 +42,7 @@ const Profile = () => {
 
             </div>
             <div className="px-3 mt-16">
-                <div className="text-3xl xs-mx:text-2xl font-semibold flex justify-between">{profile?.name} <Button size={matches?"sm":"md"} color="brightSun.4" variant="light">Message</Button></div>
+                <div className="text-3xl xs-mx:text-2xl font-semibold flex justify-between">{profile?.name} <Button size={matches?"sm":"md"} onClick={handleMessage} color="brightSun.4" variant="light">Message</Button></div>
                 <div className="text-xl xs-mx:text-base flex gap-1 items-center"> <IconBriefcase className="h-5 w-5" stroke={1.5} />{profile?.jobTitle}  &bull; {profile?.company}</div>
                 <div className="text-lg flex xs-mx:text-base gap-1 items-center text-mine-shaft-300">
                     <IconMapPin className="h-5 w-5" stroke={1.5} /> {profile?.location}
