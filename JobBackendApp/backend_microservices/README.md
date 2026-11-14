@@ -1,4 +1,4 @@
-# JobPilot — Microservices
+# oneKampus Jobs — Microservices
 
 The job portal's Spring Boot monolith ([`../backend_springBoot`](../backend_springBoot), still the live API) split into
 microservices. **Same URLs and JSON**, so the React, Angular, Next.js and mobile apps work unchanged: only their API base
@@ -59,7 +59,7 @@ Needs Docker (Docker Desktop or Colima) and Java 17.
 - Settings: copy `.env.example` to `.env` (JWT secret, MongoDB Atlas URI, Gmail for OTP mail, gateway port).
   Without mail settings the OTP is printed in `docker compose logs user-service`.
 - Memory: about 1.5 GB for the whole stack (each JVM capped by its container limit).
-- Postman: import `JobPilot-Microservices.postman_collection.json` and run "Login" first.
+- Postman: import `oneKampus-Jobs-Microservices.postman_collection.json` and run "Login" first.
 
 **Point the React app at it:** `REACT_APP_API_URL=http://localhost:8080 npm start` in
 `JobFrontendApp/JobWebApp/frontend_ReactJs`.

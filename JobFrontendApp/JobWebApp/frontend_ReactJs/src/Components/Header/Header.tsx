@@ -1,5 +1,6 @@
 import { Avatar, Burger, Button, Drawer, Indicator } from "@mantine/core";
-import { IconPlaneTilt, IconAsset, IconBell, IconSettings, IconX } from "@tabler/icons-react";
+import { IconX } from "@tabler/icons-react";
+import Logo from "../Brand/Logo";
 import NavLinks from "./NavLinks";
 import ProfileMenu from "./ProfileMenu";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -48,9 +49,8 @@ const Header = () => {
         }
     }, [token, navigate]);
     return (location.pathname != "/signup" && location.pathname != "/login") ? <div data-aos="zoom-out" className="w-full bg-mine-shaft-950 px-6 text-white h-20 flex justify-between items-center font-['poppins']">
-        <div onClick={() => navigate("/")} className="flex gap-1 cursor-pointer items-center text-bright-sun-400">
-            <IconPlaneTilt className="h-8 w-8" stroke={2.5} />
-            <div className=" xs-mx:hidden text-3xl font-semibold">JobPilot</div>
+        <div onClick={() => navigate("/")} className="flex cursor-pointer items-center">
+            <Logo size="md" />
         </div>
         <NavLinks />
         <div className="flex gap-3 items-center">
