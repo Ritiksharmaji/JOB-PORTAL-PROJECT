@@ -30,6 +30,8 @@
 		<module>infra/discovery-server</module>
 		<module>infra/config-server</module>
 		<module>infra/api-gateway</module>
+		<!-- business services -->
+		<module>services/user-service</module>
 	</modules>
 
 	<properties>

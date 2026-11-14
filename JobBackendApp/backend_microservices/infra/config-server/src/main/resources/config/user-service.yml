@@ -1,0 +1,32 @@
+server:
+  port: 8081
+spring:
+  data:
+    mongodb:
+      database: jobportal_users
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.starttls.enable: true
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 20s
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 5s
+management:
+  health:
+    mail:
+      enabled: false # mail is optional in development (OTP is logged instead)
