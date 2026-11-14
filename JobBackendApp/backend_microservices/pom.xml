@@ -34,6 +34,7 @@
 		<module>services/user-service</module>
 		<module>services/profile-service</module>
 		<module>services/job-service</module>
+		<module>services/notification-service</module>
 	</modules>
 
 	<properties>
