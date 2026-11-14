@@ -9,6 +9,7 @@ import com.jobportal.dto.AccountType;
 import com.jobportal.dto.ApplicantDTO;
 import com.jobportal.dto.JobDTO;
 import com.jobportal.dto.ProfileDTO;
+import com.jobportal.exception.JobPortalException;
 import com.jobportal.jwt.CustomUserDetails;
 
 /**
@@ -30,6 +31,24 @@ public final class PublicView {
 			return user;
 		}
 		return null;
+	}
+
+	/** The logged-in user; throws if there is none (should not happen behind Spring Security). */
+	public static CustomUserDetails requireViewer() throws JobPortalException {
+		CustomUserDetails v = viewer();
+		if (v == null) throw new JobPortalException("NOT_ALLOWED");
+		return v;
+	}
+
+	public static boolean isAdmin(CustomUserDetails v) {
+		return v != null && v.getAccountType() == AccountType.ADMIN;
+	}
+
+	/** Only the user themself (or an admin) may read their history, posted jobs or notifications. */
+	public static CustomUserDetails requireSelfOrAdmin(Long userId) throws JobPortalException {
+		CustomUserDetails v = requireViewer();
+		if (!isAdmin(v) && !java.util.Objects.equals(v.getId(), userId)) throw new JobPortalException("NOT_ALLOWED");
+		return v;
 	}
 
 	public static JobDTO job(JobDTO job) {

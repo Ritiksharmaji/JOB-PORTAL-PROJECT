@@ -1,5 +1,8 @@
 package com.jobportal.service;
 
+import com.jobportal.jwt.CustomUserDetails;
+import com.jobportal.utility.PublicView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +42,11 @@ public class ProfileServiceImpl implements ProfileService {
 
 	@Override
 	public ProfileDTO updateProfile(ProfileDTO profileDTO) throws JobPortalException {
-		profileRepository.findById(profileDTO.getId()).orElseThrow(()->new JobPortalException("PROFILE_NOT_FOUND"));
+		Profile existing = profileRepository.findById(profileDTO.getId()).orElseThrow(()->new JobPortalException("PROFILE_NOT_FOUND"));
+		CustomUserDetails viewer = PublicView.requireViewer();
+		if (!PublicView.isAdmin(viewer) && !existing.getEmail().equalsIgnoreCase(viewer.getUsername()))
+			throw new JobPortalException("PROFILE_NOT_YOURS");
+		profileDTO.setEmail(existing.getEmail());
 		profileRepository.save(profileDTO.toEntity());
 		return profileDTO;
 	}

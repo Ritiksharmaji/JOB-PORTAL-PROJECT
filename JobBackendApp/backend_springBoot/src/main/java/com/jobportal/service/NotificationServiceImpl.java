@@ -32,6 +32,12 @@ public class NotificationServiceImpl implements NotificationService{
 	}
 
 	@Override
+	public void requireOwner(Long id) throws JobPortalException {
+		Notification noti = notificationRepository.findById(id).orElseThrow(() -> new JobPortalException("No Notitication found"));
+		com.jobportal.utility.PublicView.requireSelfOrAdmin(noti.getUserId());
+	}
+
+	@Override
 	public void readNotification(Long id) throws JobPortalException {
 		Notification noti=notificationRepository.findById(id).orElseThrow(()->new JobPortalException("No Notitication found"));
 		noti.setStatus(NotificationStatus.READ);

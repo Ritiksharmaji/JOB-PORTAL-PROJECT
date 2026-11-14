@@ -1,5 +1,10 @@
 package com.jobportal.service;
 
+import java.util.Objects;
+import com.jobportal.dto.AccountType;
+import com.jobportal.jwt.CustomUserDetails;
+import com.jobportal.utility.PublicView;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +34,11 @@ public class JobServiceImpl implements JobService {
 
 	@Override
 	public JobDTO postJob(JobDTO jobDTO) throws JobPortalException {
-		if(jobDTO.getId()==0) {
+		CustomUserDetails viewer = PublicView.requireViewer();
+		if (!PublicView.isAdmin(viewer) && viewer.getAccountType() != AccountType.EMPLOYER) throw new JobPortalException("NOT_ALLOWED");
+		if(jobDTO.getId()==null || jobDTO.getId()==0) {
+			jobDTO.setPostedBy(viewer.getId()); // not from the request body
+			jobDTO.setApplicants(null);
 			jobDTO.setId(Utilities.getNextSequenceId("jobs"));
 			jobDTO.setPostTime(LocalDateTime.now());
 			NotificationDTO notiDto=new NotificationDTO();
@@ -42,7 +51,13 @@ public class JobServiceImpl implements JobService {
 		}
 		else {
 			Job job=jobRepository.findById(jobDTO.getId()).orElseThrow(() -> new JobPortalException("JOB_NOT_FOUND"));
+			if (!PublicView.isAdmin(viewer) && !Objects.equals(job.getPostedBy(), viewer.getId())) throw new JobPortalException("NOT_ALLOWED");
 			if(job.getJobStatus().equals(JobStatus.DRAFT) || jobDTO.getJobStatus().equals(JobStatus.CLOSED))jobDTO.setPostTime(LocalDateTime.now());
+			else jobDTO.setPostTime(job.getPostTime());
+			jobDTO.setPostedBy(job.getPostedBy());
+			Job updated = jobDTO.toEntity();
+			updated.setApplicants(job.getApplicants()); // editing or closing a job must not wipe its applications
+			return jobRepository.save(updated).toDTO();
 		}
 		return jobRepository.save(jobDTO.toEntity()).toDTO();
 	}
@@ -61,9 +76,10 @@ public class JobServiceImpl implements JobService {
 	@Override
 	public void applyJob(Long id, ApplicantDTO applicantDTO) throws JobPortalException {
 		Job job = jobRepository.findById(id).orElseThrow(() -> new JobPortalException("JOB_NOT_FOUND"));
+		applicantDTO.setApplicantId(PublicView.requireViewer().getId()); // not from the request body
 		List<Applicant> applicants = job.getApplicants();
 		if (applicants == null)applicants = new ArrayList<>();
-		if (applicants.stream().filter((x) -> x.getApplicantId() == applicantDTO.getApplicantId()).toList().size() > 0)throw new JobPortalException("JOB_APPLIED_ALREADY");
+		if (applicants.stream().filter((x) -> Objects.equals(x.getApplicantId(), applicantDTO.getApplicantId())).toList().size() > 0)throw new JobPortalException("JOB_APPLIED_ALREADY");
 		applicantDTO.setApplicationStatus(ApplicationStatus.APPLIED);
 		applicants.add(applicantDTO.toEntity());
 		job.setApplicants(applicants);
@@ -85,8 +101,10 @@ public class JobServiceImpl implements JobService {
 	@Override
 	public void changeAppStatus(Application application) throws JobPortalException {
 		Job job = jobRepository.findById(application.getId()).orElseThrow(() -> new JobPortalException("JOB_NOT_FOUND"));
+		CustomUserDetails viewer = PublicView.requireViewer();
+		if (!PublicView.isAdmin(viewer) && !Objects.equals(job.getPostedBy(), viewer.getId())) throw new JobPortalException("NOT_ALLOWED");
 		List<Applicant> apps = job.getApplicants().stream().map((x) -> {
-			if (application.getApplicantId() == x.getApplicantId()) {
+			if (Objects.equals(application.getApplicantId(), x.getApplicantId())) {
 				x.setApplicationStatus(application.getApplicationStatus());
 				if(application.getApplicationStatus().equals(ApplicationStatus.INTERVIEWING)) {
 					x.setInterviewTime(application.getInterviewTime());

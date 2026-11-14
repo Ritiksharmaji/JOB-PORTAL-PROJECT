@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
 		message.setTo(email);
 		message.setSubject("Your OTP Code");
 		String generatedOtp = Utilities.generateOTP();
-		OTP otp = new OTP(email, generatedOtp, LocalDateTime.now());
+		OTP otp = new OTP(email, generatedOtp, LocalDateTime.now(), false);
 		otpRepository.save(otp);
 		message.setText(Data.getMessageBody(generatedOtp, user.getName()), true);
 		mailSender.send(mm);
@@ -93,6 +93,8 @@ public class UserServiceImpl implements UserService {
 	public Boolean verifyOtp(String email, String otp) throws JobPortalException {
 		OTP otpEntity = otpRepository.findById(email).orElseThrow(() -> new JobPortalException("OTP_NOT_FOUND"));
 		if(!otpEntity.getOtpCode().equals(otp))throw new JobPortalException("OTP_INCORRECT");
+		otpEntity.setVerified(true);
+		otpRepository.save(otpEntity);
 		return true;
 	}
 
@@ -110,8 +112,13 @@ public class UserServiceImpl implements UserService {
 	public ResponseDTO changePassword(LoginDTO loginDTO) throws JobPortalException {
 		User user = userRepository.findByEmail(loginDTO.getEmail())
 				.orElseThrow(() -> new JobPortalException("USER_NOT_FOUND"));
+		// Security: only after the OTP sent to this email was verified (within 5 minutes); one reset per OTP.
+		OTP otp = otpRepository.findById(loginDTO.getEmail()).orElse(null);
+		if (otp == null || !otp.isVerified() || otp.getCreationTime().isBefore(LocalDateTime.now().minusMinutes(5)))
+			throw new JobPortalException("OTP_NOT_VERIFIED");
 		user.setPassword(passwordEncoder.encode(loginDTO.getPassword()));
 		userRepository.save(user);
+		otpRepository.delete(otp);
 		NotificationDTO noti=new NotificationDTO();
 		noti.setUserId(user.getId());
 		noti.setMessage("Password Reset Successfull");
