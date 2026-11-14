@@ -52,7 +52,7 @@ export default function CompanyScreen({ route, navigation }) {
             <Image source={logoFor(companyName)} style={styles.logo} resizeMode="contain" />
           </View>
           <Text style={styles.name}>{companyName}</Text>
-          <Text style={styles.industry}>Hiring on Jobify</Text>
+          <Text style={styles.industry}>Hiring on oneKampus Jobs</Text>
         </View>
 
         <View style={styles.stats}>

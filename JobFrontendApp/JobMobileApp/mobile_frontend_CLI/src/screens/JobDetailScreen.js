@@ -5,7 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { font, radius } from '../theme';
 import { useTheme } from '../context/ThemeContext';
 import { logoFor } from '../assets';
-import { AppContext } from '../context/AppContext';
+import { AppContext, useRequireLogin } from '../context/AppContext';
 import Tag from '../components/Tag';
 import { getJob } from '../services/jobService';
 import { pkgText, postedAgo, stripHtml } from '../utils/format';
@@ -26,7 +26,9 @@ const InfoCard = ({ icon, label, value }) => {
 
 export default function JobDetailScreen({ route, navigation }) {
   const jobId = route.params?.jobId;
-  const { savedJobs, toggleSave, user } = useContext(AppContext);
+  const { savedJobs, toggleSave, user, role } = useContext(AppContext);
+  const requireLogin = useRequireLogin();
+  const isRecruiter = role === 'employer';
   const { colors } = useTheme();
   const styles = makeStyles(colors);
   const [job, setJob] = useState(null);
@@ -73,9 +75,11 @@ export default function JobDetailScreen({ route, navigation }) {
         <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={20} color={colors.text} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconBtn} onPress={() => toggleSave(job.id)}>
-          <Ionicons name={saved ? 'bookmark' : 'bookmark-outline'} size={19} color={saved ? colors.accent : colors.text} />
-        </TouchableOpacity>
+        {isRecruiter ? <View /> : (
+          <TouchableOpacity style={styles.iconBtn} onPress={() => requireLogin(navigation, () => toggleSave(job.id))}>
+            <Ionicons name={saved ? 'bookmark' : 'bookmark-outline'} size={19} color={saved ? colors.accent : colors.text} />
+          </TouchableOpacity>
+        )}
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.body}>
@@ -122,8 +126,8 @@ export default function JobDetailScreen({ route, navigation }) {
         )}
       </ScrollView>
 
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.saveBtn} onPress={() => toggleSave(job.id)}>
+      {!isRecruiter && <View style={styles.footer}>
+        <TouchableOpacity style={styles.saveBtn} onPress={() => requireLogin(navigation, () => toggleSave(job.id))}>
           <Ionicons name={saved ? 'bookmark' : 'bookmark-outline'} size={22} color={colors.accent} />
         </TouchableOpacity>
         {applied ? (
@@ -132,11 +136,11 @@ export default function JobDetailScreen({ route, navigation }) {
             <Text style={styles.appliedTxt}>Applied</Text>
           </View>
         ) : (
-          <TouchableOpacity activeOpacity={0.85} style={styles.applyBtn} onPress={() => navigation.navigate('Apply', { jobId: job.id })}>
+          <TouchableOpacity activeOpacity={0.85} style={styles.applyBtn} onPress={() => requireLogin(navigation, () => navigation.navigate('Apply', { jobId: job.id }))}>
             <Text style={styles.applyTxt}>Apply Now</Text>
           </TouchableOpacity>
         )}
-      </View>
+      </View>}
     </SafeAreaView>
   );
 }

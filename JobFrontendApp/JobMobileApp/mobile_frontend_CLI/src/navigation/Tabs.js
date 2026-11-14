@@ -31,6 +31,29 @@ const makeScreenOptions = (colors) => () => ({
 
 const icon = (name) => ({ color, size }) => <Ionicons name={name} size={size ?? 22} color={color} />;
 
+// Visitors (not signed in): browse jobs; the last tab opens Sign in.
+const SignInPlaceholder = () => null;
+export function GuestTabs() {
+  const { colors } = useTheme();
+  return (
+    <Tab.Navigator screenOptions={makeScreenOptions(colors)}>
+      <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: icon('home-outline') }} />
+      <Tab.Screen name="Jobs" component={FindJobsScreen} options={{ tabBarIcon: icon('search-outline') }} />
+      <Tab.Screen
+        name="Sign in"
+        component={SignInPlaceholder}
+        options={{ tabBarIcon: icon('log-in-outline') }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.navigate('Login');
+          },
+        })}
+      />
+    </Tab.Navigator>
+  );
+}
+
 export function ApplicantTabs() {
   const { colors } = useTheme();
   return (

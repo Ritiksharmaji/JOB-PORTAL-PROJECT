@@ -5,7 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
-import { ApplicantTabs, EmployerTabs } from './Tabs';
+import { ApplicantTabs, EmployerTabs, GuestTabs } from './Tabs';
 
 import JobDetailScreen from '../screens/JobDetailScreen';
 import ApplyScreen from '../screens/ApplyScreen';
@@ -31,27 +31,23 @@ export default function RootNavigator() {
         animation: 'slide_from_right',
       }}
     >
-      {!isSignedIn ? (
+      {/* Browsing is public (like the web app): visitors start on the job tabs and sign in
+          only for actions. Tabs follow the role: visitor, job seeker or recruiter. */}
+      <Stack.Screen
+        name="App"
+        component={role === 'employer' ? EmployerTabs : role === 'applicant' ? ApplicantTabs : GuestTabs}
+      />
+      <Stack.Screen name="JobDetail" component={JobDetailScreen} />
+      <Stack.Screen name="Company" component={CompanyScreen} />
+      <Stack.Screen name="TalentDetail" component={TalentDetailScreen} />
+      {isSignedIn && (
         <>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Signup" component={SignupScreen} />
-        </>
-      ) : (
-        <>
-          <Stack.Screen
-            name="App"
-            component={role === 'employer' ? EmployerTabs : ApplicantTabs}
-          />
-          {/* Shared detail/flow screens reachable from either tab set */}
-          <Stack.Screen name="JobDetail" component={JobDetailScreen} />
           <Stack.Screen name="Apply" component={ApplyScreen} />
           <Stack.Screen
             name="ApplySuccess"
             component={ApplySuccessScreen}
             options={{ animation: 'fade', gestureEnabled: false }}
           />
-          <Stack.Screen name="Company" component={CompanyScreen} />
-          <Stack.Screen name="TalentDetail" component={TalentDetailScreen} />
           <Stack.Screen name="PostedDetail" component={PostedDetailScreen} />
           {/* PostJob is also a tab for employers, but reachable as a route for edit (jobId param) */}
           <Stack.Screen name="PostJob" component={PostJobScreen} />
@@ -59,6 +55,8 @@ export default function RootNavigator() {
           <Stack.Screen name="Notifications" component={NotificationsScreen} />
         </>
       )}
+      <Stack.Screen name="Login" component={LoginScreen} options={{ animation: 'slide_from_bottom' }} />
+      <Stack.Screen name="Signup" component={SignupScreen} />
     </Stack.Navigator>
   );
 }
