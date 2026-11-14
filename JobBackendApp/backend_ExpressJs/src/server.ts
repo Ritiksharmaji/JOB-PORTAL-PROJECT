@@ -8,7 +8,7 @@ async function main(): Promise<void> {
   await connectDatabase();
 
   const server = createApp().listen(env.port, () => {
-    logger.info(`JobPilot Express API listening on http://localhost:${env.port} (${env.nodeEnv})`);
+    logger.info(`oneKampus Jobs Express API listening on http://localhost:${env.port} (${env.nodeEnv})`);
   });
 
   // Spring: @Scheduled(fixedRate = 60000) removeExpiredOTPs

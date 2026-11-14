@@ -1,4 +1,4 @@
-# Job Portal (JobPilot)
+# Job Portal (oneKampus Jobs)
 
 Full-stack job portal: React.js web app + Spring Boot API + MongoDB Atlas, plus Angular, Next.js and React Native clients.
 
@@ -6,7 +6,7 @@ Full-stack job portal: React.js web app + Spring Boot API + MongoDB Atlas, plus 
 
 | Part | URL | Hosting |
 | --- | --- | --- |
-| Web app (React) | https://www.jobpilotai.site | AWS Amplify |
+| Web app (React) | https://jobs.onekampus.com (jobpilotai.site redirects here) | AWS Lightsail (Caddy, static files) |
 | API (Spring Boot) | https://jobs-api.onekampus.com | AWS Lightsail (Docker + Caddy HTTPS) |
 | Database | MongoDB Atlas | — |
 

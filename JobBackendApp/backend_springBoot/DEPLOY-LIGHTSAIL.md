@@ -4,7 +4,7 @@ The live API runs at **https://jobs-api.onekampus.com** as a Docker container on
 Lightsail server `music-app` (ap-south-1, static IP `13.207.89.19`). Replaces the old Render deploy.
 
 ```text
-Browser (www.jobpilotai.site, Amplify)
+Browser (jobs.onekampus.com)
    │ HTTPS
    ▼
 Caddy (music-app server, Let's Encrypt)  ──►  job-api container :8080  ──►  MongoDB Atlas

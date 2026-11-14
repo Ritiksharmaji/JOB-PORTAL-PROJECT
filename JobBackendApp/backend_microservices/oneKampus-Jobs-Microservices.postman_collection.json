@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "JobPilot \u2014 Microservices (via API gateway)",
+    "name": "oneKampus Jobs \u2014 Microservices (via API gateway)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": "All requests go through the API gateway (baseUrl). Log in first: the token, userId and profileId are saved automatically."
   },
