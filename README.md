@@ -17,3 +17,4 @@ Full-stack job portal: React.js web app + Spring Boot API + MongoDB Atlas, plus 
 - `JobFrontendApp/JobMobileApp` — React Native apps.
 - `JobBackendApp/backend_springBoot` — the live API. Deploy guide: [DEPLOY-LIGHTSAIL.md](JobBackendApp/backend_springBoot/DEPLOY-LIGHTSAIL.md).
 - `JobBackendApp/backend_ExpressJs` — drop-in Express.js version of the same API.
+- `JobBackendApp/backend_microservices` — the same API split into microservices (Spring Cloud gateway, Eureka, config server, 4 services, RabbitMQ, database per service), runs locally with Docker Compose. See its [README](JobBackendApp/backend_microservices/README.md).
