@@ -12,6 +12,9 @@ x-java: &java
     EUREKA_URL: http://discovery-server:8761/eureka
     MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017}
     RABBITMQ_HOST: rabbitmq
+    # Must match the timezone the monolith ran in (its Docker container on Lightsail = UTC), because
+    # MongoDB stores LocalDateTime values converted from the JVM's timezone.
+    TZ: ${TZ:-UTC}
     # Development default = the monolith's default, so local tokens match. Set JWT_SECRET in .env for anything real.
     JWT_SECRET: ${JWT_SECRET:-afafasfafafasfasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwavfsfarvf}
   healthcheck: &health
