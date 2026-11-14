@@ -21,6 +21,7 @@ import com.jobportal.dto.JobDTO;
 import com.jobportal.dto.ResponseDTO;
 import com.jobportal.exception.JobPortalException;
 import com.jobportal.service.JobService;
+import com.jobportal.utility.PublicView;
 
 import jakarta.validation.Valid;
 
@@ -55,11 +56,11 @@ public class JobAPI {
 	
 	@GetMapping("/getAll")
 	public ResponseEntity<List<JobDTO>>getAllJobs() throws JobPortalException{
-		return new ResponseEntity<>(jobService.getAllJobs(), HttpStatus.OK);
+		return new ResponseEntity<>(PublicView.jobs(jobService.getAllJobs()), HttpStatus.OK);
 	}
 	@GetMapping("/get/{id}")
 	public ResponseEntity<JobDTO>getJob(@PathVariable Long id) throws JobPortalException{
-		return new ResponseEntity<>(jobService.getJob(id), HttpStatus.OK);
+		return new ResponseEntity<>(PublicView.job(jobService.getJob(id)), HttpStatus.OK);
 	}
 	@PostMapping("apply/{id}")
 	public ResponseEntity<ResponseDTO>applyJob(@PathVariable Long id, @RequestBody ApplicantDTO applicantDTO) throws JobPortalException{

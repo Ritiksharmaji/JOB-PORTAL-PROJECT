@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jobportal.dto.ProfileDTO;
 import com.jobportal.exception.JobPortalException;
 import com.jobportal.service.ProfileService;
+import com.jobportal.utility.PublicView;
 
 
 @RestController
@@ -29,11 +30,11 @@ public class ProfileAPI {
 	private ProfileService profileService;
 	@GetMapping("/get/{id}")
 	public ResponseEntity<ProfileDTO>getProfile(@PathVariable Long id) throws JobPortalException{
-		return new ResponseEntity<>(profileService.getProfile(id), HttpStatus.OK);
+		return new ResponseEntity<>(PublicView.profile(profileService.getProfile(id)), HttpStatus.OK);
 	}
 	@GetMapping("/getAll")
 	public ResponseEntity<List<ProfileDTO>>getAllProfiles() throws JobPortalException{
-		return new ResponseEntity<>(profileService.getAllProfiles(), HttpStatus.OK);
+		return new ResponseEntity<>(PublicView.profiles(profileService.getAllProfiles()), HttpStatus.OK);
 	}
 	@PutMapping("/update")
 	public ResponseEntity<ProfileDTO>updateProfile(@RequestBody ProfileDTO profileDTO) throws JobPortalException{
