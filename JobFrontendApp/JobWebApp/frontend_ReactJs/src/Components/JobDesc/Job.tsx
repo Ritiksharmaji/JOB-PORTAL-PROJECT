@@ -11,12 +11,16 @@ import { changeProfile } from "../../Slices/ProfileSlice";
 import { postJob } from "../../Services/JobService";
 import { successNotification } from "../../Services/NotificationService";
 import { hideOverlay, showOverlay } from "../../Slices/OverlaySlice";
+import { useRequireLogin, useRole } from "../../Services/Access";
 
 const Job = (props:any) => {
     const dispatch=useDispatch();
     const user=useSelector((state:any)=>state.user);
     const profile=useSelector((state:any)=>state.profile);
-    const handleSaveJob = () => {
+    const requireLogin=useRequireLogin();
+    const role=useRole();
+    const isRecruiter=role==="EMPLOYER";
+    const handleSaveJob = () => requireLogin(() => {
         let savedJobs:any=profile.savedJobs?[...profile.savedJobs]:[];
         if(savedJobs.includes(props.id)){
             savedJobs=savedJobs.filter((job:any)=>job!=props.id);
@@ -25,10 +29,10 @@ const Job = (props:any) => {
         }
         let updatedProfile={...profile,savedJobs:savedJobs};
         dispatch(changeProfile(updatedProfile));
-    }
+    });
     const [applied, setApplied] = useState(false);
     useEffect(()=>{
-        if(props.applicants?.filter((applicant:any)=>applicant.applicantId==user.id).length>0){
+        if(user?.id!=null && props.applicants?.some((applicant:any)=>applicant.applicantId===user.id)){
             setApplied(true);
         }
         else setApplied(false);
@@ -55,11 +59,11 @@ const Job = (props:any) => {
 
             </div>
             <div className="flex sm:flex-col gap-2 items-center sm-mx:my-5 sm-mx:w-full sm-mx:[&>button]:w-1/2">
-                { (props.edit || !applied) &&<Link to={props.edit?`/post-job/${props.id}`:`/apply-job/${props.id}`} >
+                { (props.edit || (!applied && !isRecruiter)) &&<Link to={props.edit?`/post-job/${props.id}`:`/apply-job/${props.id}`} >
                     <Button color="brightSun.4" size="sm" variant="light">{props.closed?"Reopen":props.edit?"Edit":"Apply"}</Button>
                 </Link>}
                 {applied && !props.edit && <Button  color="green.8" size="sm" variant="light">Applied</Button>}
-                {props.edit && !props.closed? <Button onClick={handleClose}  color="red.4" size="sm" variant="light">Close</Button>:profile.savedJobs?.includes(props.id) ?<IconBookmarkFilled onClick={handleSaveJob} className="cursor-pointer text-bright-sun-400 " stroke={1.5} />:<IconBookmark onClick={handleSaveJob} className="cursor-pointer hover:text-bright-sun-400  text-mine-shaft-300" stroke={1.5} />}
+                {props.edit && !props.closed? <Button onClick={handleClose}  color="red.4" size="sm" variant="light">Close</Button>:isRecruiter ? null : profile?.savedJobs?.includes(props.id) ?<IconBookmarkFilled onClick={handleSaveJob} className="cursor-pointer text-bright-sun-400 " stroke={1.5} />:<IconBookmark onClick={handleSaveJob} className="cursor-pointer hover:text-bright-sun-400  text-mine-shaft-300" stroke={1.5} />}
             </div>
         </div>
         <Divider size="xs" my="xl" />
