@@ -1,0 +1,14 @@
+server:
+  port: 8084
+spring:
+  data:
+    mongodb:
+      database: jobportal_notifications
+  rabbitmq:
+    listener:
+      simple:
+        default-requeue-rejected: false # failed messages go to the dead-letter queue instead of looping
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 1s
