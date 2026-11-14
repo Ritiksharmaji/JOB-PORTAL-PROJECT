@@ -1,0 +1,104 @@
+# JobPilot microservices — the whole stack with one command (see scripts/up.sh).
+# Only the API gateway (and the Eureka / RabbitMQ dashboards) are published to the host.
+name: jobpilot-microservices
+
+x-java: &java
+  build:
+    context: .
+    dockerfile: docker/Dockerfile
+  restart: unless-stopped
+  environment: &env
+    CONFIG_URL: http://config-server:8888
+    EUREKA_URL: http://discovery-server:8761/eureka
+    MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017}
+    RABBITMQ_HOST: rabbitmq
+    # Must match the timezone the monolith ran in (its Docker container on Lightsail = UTC), because
+    # MongoDB stores LocalDateTime values converted from the JVM's timezone.
+    TZ: ${TZ:-UTC}
+    # Development default = the monolith's default, so local tokens match. Set JWT_SECRET in .env for anything real.
+    JWT_SECRET: ${JWT_SECRET:-afafasfafafasfasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwavfsfarvf}
+  healthcheck: &health
+    test: ["CMD", "curl", "-fs", "http://localhost:8080/actuator/health"]
+    interval: 10s
+    timeout: 5s
+    retries: 18
+    start_period: 30s
+
+x-business: &business
+  <<: *java
+  mem_limit: 320m
+  depends_on:
+    config-server: { condition: service_healthy }
+    discovery-server: { condition: service_healthy }
+    mongo: { condition: service_healthy }
+    rabbitmq: { condition: service_healthy }
+
+services:
+  mongo:
+    image: mongo:7
+    ports: ["27018:27017"] # for tools such as the data migration (mongodb://localhost:27018)
+    command: ["--wiredTigerCacheSizeGB", "0.25"]
+    volumes: [mongo-data:/data/db]
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports: ["15672:15672"] # dashboard: http://localhost:15672 (guest / guest)
+    mem_limit: 384m
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      retries: 12
+
+  discovery-server:
+    <<: *java
+    build: { context: ., dockerfile: docker/Dockerfile, args: { MODULE: infra/discovery-server } }
+    environment: { EUREKA_HOSTNAME: discovery-server }
+    ports: ["8761:8761"] # Eureka dashboard
+    mem_limit: 256m
+    healthcheck: { <<: *health, test: ["CMD", "curl", "-fs", "http://localhost:8761/actuator/health"] }
+
+  config-server:
+    <<: *java
+    build: { context: ., dockerfile: docker/Dockerfile, args: { MODULE: infra/config-server } }
+    environment: {}
+    mem_limit: 256m
+    healthcheck: { <<: *health, test: ["CMD", "curl", "-fs", "http://localhost:8888/actuator/health"] }
+
+  api-gateway:
+    <<: *java
+    build: { context: ., dockerfile: docker/Dockerfile, args: { MODULE: infra/api-gateway } }
+    environment: { <<: *env, CORS_ORIGINS: "*" }
+    ports: ["${GATEWAY_PORT:-8080}:8080"]
+    mem_limit: 320m
+    depends_on:
+      config-server: { condition: service_healthy }
+      discovery-server: { condition: service_healthy }
+
+  user-service:
+    <<: *business
+    build: { context: ., dockerfile: docker/Dockerfile, args: { MODULE: services/user-service } }
+    environment: { <<: *env, MAIL_USERNAME: "${MAIL_USERNAME:-}", MAIL_PASSWORD: "${MAIL_PASSWORD:-}" }
+    healthcheck: { <<: *health, test: ["CMD", "curl", "-fs", "http://localhost:8081/actuator/health"] }
+
+  profile-service:
+    <<: *business
+    build: { context: ., dockerfile: docker/Dockerfile, args: { MODULE: services/profile-service } }
+    healthcheck: { <<: *health, test: ["CMD", "curl", "-fs", "http://localhost:8082/actuator/health"] }
+
+  job-service:
+    <<: *business
+    build: { context: ., dockerfile: docker/Dockerfile, args: { MODULE: services/job-service } }
+    healthcheck: { <<: *health, test: ["CMD", "curl", "-fs", "http://localhost:8083/actuator/health"] }
+
+  notification-service:
+    <<: *business
+    build: { context: ., dockerfile: docker/Dockerfile, args: { MODULE: services/notification-service } }
+    healthcheck: { <<: *health, test: ["CMD", "curl", "-fs", "http://localhost:8084/actuator/health"] }
+
+volumes:
+  mongo-data:

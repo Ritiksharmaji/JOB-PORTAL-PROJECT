@@ -1,0 +1,256 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------
+   Theme tokens
+   'mine-shaft' resolves to CSS variables so the whole UI can flip between
+   dark (default) and light (.light-theme on <html>) without editing components.
+   ------------------------------------------------------------------ */
+@theme {
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+
+  --color-mine-shaft-50: rgb(var(--ms-50));
+  --color-mine-shaft-100: rgb(var(--ms-100));
+  --color-mine-shaft-200: rgb(var(--ms-200));
+  --color-mine-shaft-300: rgb(var(--ms-300));
+  --color-mine-shaft-400: rgb(var(--ms-400));
+  --color-mine-shaft-500: rgb(var(--ms-500));
+  --color-mine-shaft-600: rgb(var(--ms-600));
+  --color-mine-shaft-700: rgb(var(--ms-700));
+  --color-mine-shaft-800: rgb(var(--ms-800));
+  --color-mine-shaft-900: rgb(var(--ms-900));
+  --color-mine-shaft-950: rgb(var(--ms-950));
+
+  --color-bright-sun-50: #fffbeb;
+  --color-bright-sun-100: #fff3c6;
+  --color-bright-sun-200: #ffe588;
+  --color-bright-sun-300: #ffd149;
+  --color-bright-sun-400: #ffbd20;
+  --color-bright-sun-500: #f99b07;
+  --color-bright-sun-600: #dd7302;
+  --color-bright-sun-700: #b75006;
+  --color-bright-sun-800: #943c0c;
+  --color-bright-sun-900: #7a330d;
+  --color-bright-sun-950: #461902;
+
+  /* Same breakpoints as the React app. `max-*` variants (e.g. max-md:) replace
+     the React app's custom `*-mx` screens. */
+  --breakpoint-xsm: 350px;
+  --breakpoint-xs: 476px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-bs: 900px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  --animate-option: option-in 200ms ease forwards;
+  --animate-marquee: marquee 35s linear infinite;
+  --animate-toast: toast-in 200ms ease-out;
+
+  @keyframes option-in {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* Default = DARK. Adding `.light-theme` to <html> swaps in the inverted ramp. */
+:root {
+  --ms-50: 246 246 246;
+  --ms-100: 231 231 231;
+  --ms-200: 209 209 209;
+  --ms-300: 176 176 176;
+  --ms-400: 136 136 136;
+  --ms-500: 109 109 109;
+  --ms-600: 93 93 93;
+  --ms-700: 79 79 79;
+  --ms-800: 69 69 69;
+  --ms-900: 61 61 61;
+  --ms-950: 45 45 45;
+  color-scheme: dark;
+}
+
+html.light-theme {
+  --ms-50: 45 45 45;
+  --ms-100: 61 61 61;
+  --ms-200: 69 69 69;
+  --ms-300: 79 79 79;
+  --ms-400: 93 93 93;
+  --ms-500: 109 109 109;
+  --ms-600: 136 136 136;
+  --ms-700: 176 176 176;
+  --ms-800: 209 209 209;
+  --ms-900: 231 231 231;
+  --ms-950: 246 246 246;
+  color-scheme: light;
+}
+
+@layer base {
+  body {
+    background-color: rgb(var(--ms-950));
+    color: rgb(var(--ms-100));
+    font-family: var(--font-sans);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  button:not(:disabled),
+  [role='button'] {
+    cursor: pointer;
+  }
+
+  /* Rich-text (job description / editor) keeps list bullets & spacing. */
+  .rich-text ul,
+  .rich-text ol {
+    list-style: revert;
+    padding-left: 1.25em;
+  }
+  .rich-text h1 { font-size: 1.875rem; font-weight: 600; margin: 1rem 0; }
+  .rich-text h2 { font-size: 1.5rem; font-weight: 600; margin: 1rem 0; }
+  .rich-text h3 { font-size: 1.25rem; font-weight: 600; margin: 1rem 0; }
+  .rich-text h4 { font-size: 1.25rem; font-weight: 600; margin: 1.25rem 0; color: rgb(var(--ms-200)); }
+  .rich-text p, .rich-text li { font-size: 0.875rem; color: rgb(var(--ms-300)); }
+  .rich-text p { text-align: justify; }
+  .rich-text li { margin-bottom: 0.25rem; }
+  .rich-text li::marker { color: var(--color-bright-sun-300); }
+  .rich-text blockquote { border-left: 3px solid var(--color-bright-sun-400); padding-left: 1rem; }
+  .rich-text code { background: rgb(var(--ms-800)); padding: 0 0.25rem; border-radius: 0.25rem; }
+  .rich-text mark { background: var(--color-bright-sun-300); color: #000; }
+  .rich-text a { color: var(--color-bright-sun-400); text-decoration: underline; }
+  .rich-text hr { border-color: rgb(var(--ms-700)); margin: 1rem 0; }
+}
+
+/* ------------------------------------------------------------------
+   Reusable component classes (the Angular stand-ins for Mantine variants)
+   ------------------------------------------------------------------ */
+@layer components {
+  .page {
+    @apply min-h-[90vh] bg-mine-shaft-950;
+  }
+  .divider {
+    @apply border-t border-mine-shaft-800;
+  }
+
+  .btn {
+    @apply inline-flex h-9 items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold whitespace-nowrap transition duration-200 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-sm {
+    @apply h-7 px-3 text-xs;
+  }
+  .btn-lg {
+    @apply h-12 px-6 text-base;
+  }
+  .btn-block {
+    @apply w-full;
+  }
+  .btn-filled {
+    @apply bg-bright-sun-400 text-black hover:bg-bright-sun-500;
+  }
+  .btn-light {
+    @apply bg-bright-sun-400/10 text-bright-sun-400 hover:bg-bright-sun-400/20;
+  }
+  .btn-outline {
+    @apply border border-bright-sun-400 text-bright-sun-400 hover:bg-bright-sun-400/10;
+  }
+  .btn-subtle {
+    @apply text-bright-sun-400 hover:bg-bright-sun-400/10;
+  }
+  .btn-danger {
+    @apply bg-red-500/10 text-red-400 hover:bg-red-500/20;
+  }
+  .btn-success {
+    @apply bg-green-600/10 text-green-500 hover:bg-green-600/20;
+  }
+
+  .icon-btn {
+    @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-bright-sun-400 transition hover:bg-bright-sun-400/10 max-xs:h-7 max-xs:w-7;
+  }
+  .icon-btn-danger {
+    @apply text-red-500 hover:bg-red-500/10;
+  }
+  .icon-btn-success {
+    @apply text-green-500 hover:bg-green-500/10;
+  }
+
+  .field {
+    @apply flex flex-col gap-1;
+  }
+  .field-label {
+    @apply text-sm font-medium text-mine-shaft-200;
+  }
+  .field-label.required::after {
+    content: ' *';
+    @apply text-red-500;
+  }
+  .field-input {
+    @apply h-9 w-full rounded-md border border-mine-shaft-800 bg-mine-shaft-900 px-3 text-sm text-mine-shaft-100 outline-none transition placeholder:text-mine-shaft-400 focus:border-bright-sun-400 disabled:opacity-60;
+  }
+  textarea.field-input {
+    @apply h-auto min-h-16 resize-y py-2;
+  }
+  .field-input.invalid {
+    @apply border-red-500;
+  }
+  .field-input.plain {
+    @apply border-transparent bg-transparent px-0 font-semibold text-mine-shaft-300;
+  }
+  .field-error {
+    @apply text-xs text-red-500;
+  }
+
+  .chip {
+    @apply rounded-lg bg-mine-shaft-800 p-2 py-1 text-xs text-bright-sun-400;
+  }
+  .skill-pill {
+    @apply rounded-3xl bg-bright-sun-300/15 px-3 py-1 text-sm font-medium text-bright-sun-400;
+  }
+  .card {
+    @apply flex flex-col gap-3 rounded-xl bg-mine-shaft-900 p-4 transition duration-300 ease-in-out hover:shadow-[0_0_5px_1px] hover:shadow-bright-sun-400;
+  }
+  .logo-box {
+    @apply shrink-0 rounded-md bg-mine-shaft-800 p-2;
+  }
+  .section-title {
+    @apply text-2xl font-semibold;
+  }
+  .heading-xl {
+    @apply mb-3 text-center text-4xl font-semibold text-mine-shaft-100 max-md:text-3xl max-sm:text-2xl max-xs:text-xl;
+  }
+
+  .tab-list {
+    @apply mb-5 flex flex-wrap border-b border-mine-shaft-800 font-semibold;
+  }
+  .tab {
+    @apply -mb-px rounded-t-lg border border-transparent px-4 py-2 text-xl text-mine-shaft-200 transition hover:bg-mine-shaft-900 max-sm:text-lg max-xs:px-1.5 max-xs:py-2 max-xs:text-base max-xsm:text-sm;
+  }
+  .tab.active {
+    @apply border-mine-shaft-800 border-b-mine-shaft-950 text-bright-sun-400;
+  }
+
+  .dropdown {
+    @apply absolute z-50 mt-1 overflow-hidden rounded-md border border-mine-shaft-800 bg-mine-shaft-950 shadow-lg;
+  }
+  .dropdown-item {
+    @apply flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-sm text-mine-shaft-200 transition hover:bg-mine-shaft-900;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #ffbd20;
+}
