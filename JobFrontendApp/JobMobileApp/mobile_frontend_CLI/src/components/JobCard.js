@@ -4,12 +4,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { font, radius } from '../theme';
 import { logoFor } from '../assets';
 import { pkgText, postedAgo, stripHtml } from '../utils/format';
-import { AppContext } from '../context/AppContext';
+import { useNavigation } from '@react-navigation/native';
+import { AppContext, useRequireLogin } from '../context/AppContext';
 import { useTheme } from '../context/ThemeContext';
 import Tag from './Tag';
 
 export default function JobCard({ job, onPress }) {
-  const { savedJobs, toggleSave } = useContext(AppContext);
+  const { savedJobs, toggleSave, role } = useContext(AppContext);
+  const navigation = useNavigation();
+  const requireLogin = useRequireLogin();
   const { colors } = useTheme();
   const styles = makeStyles(colors);
   const saved = savedJobs.includes(job.id);
@@ -30,16 +33,18 @@ export default function JobCard({ job, onPress }) {
             </Text>
           </View>
         </View>
-        <TouchableOpacity
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          onPress={() => toggleSave(job.id)}
-        >
-          <Ionicons
-            name={saved ? 'bookmark' : 'bookmark-outline'}
-            size={20}
-            color={saved ? colors.accent : colors.muted}
-          />
-        </TouchableOpacity>
+        {role !== 'employer' && (
+          <TouchableOpacity
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            onPress={() => requireLogin(navigation, () => toggleSave(job.id))}
+          >
+            <Ionicons
+              name={saved ? 'bookmark' : 'bookmark-outline'}
+              size={20}
+              color={saved ? colors.accent : colors.muted}
+            />
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={styles.tagRow}>

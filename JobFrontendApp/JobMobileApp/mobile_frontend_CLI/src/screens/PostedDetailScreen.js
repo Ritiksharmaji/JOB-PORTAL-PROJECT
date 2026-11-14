@@ -7,7 +7,7 @@ import { useTheme } from '../context/ThemeContext';
 import { logoFor } from '../assets';
 import ScreenHeader from '../components/ScreenHeader';
 import { getJob, changeAppStatus, postJob } from '../services/jobService';
-import { initials, timeAgo } from '../utils/format';
+import { formatInterview, initials, timeAgo } from '../utils/format';
 import { errMessage } from '../api/client';
 
 const TABS = [
@@ -154,6 +154,9 @@ export default function PostedDetailScreen({ route, navigation }) {
                   {a.timestamp ? <Text style={styles.ago}>{timeAgo(a.timestamp)}</Text> : null}
                 </View>
 
+                {a.applicationStatus === 'INTERVIEWING' && !!a.interviewTime && (
+                  <Text style={styles.interview}>Interview: {formatInterview(a.interviewTime)}</Text>
+                )}
                 {!!a.coverLetter && <Text style={styles.cover} numberOfLines={3}>{a.coverLetter}</Text>}
                 {!!a.website && (
                   <Text style={styles.website} numberOfLines={1}>{a.website}</Text>
@@ -198,6 +201,7 @@ const ActBtn = ({ label, onPress, busy, primary, danger }) => {
 };
 
 const makeStyles = (colors) => StyleSheet.create({
+  interview: { fontFamily: font.medium, fontSize: 12.5, color: colors.accent, marginTop: 10 },
   safe: { flex: 1, backgroundColor: colors.bg },
   center: { alignItems: 'center', justifyContent: 'center' },
   muted: { fontFamily: font.medium, fontSize: 15, color: colors.textDim },

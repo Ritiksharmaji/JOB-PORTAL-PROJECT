@@ -28,6 +28,24 @@ export const timeAgo = (value) => {
   return 'just now';
 };
 
+// The API stores interview times in UTC and returns them without a timezone ("2026-12-01T04:30:00").
+// Read such values as UTC so each user sees their local time (10:00 AM in India, not 4:30 AM).
+export const parseServerDate = (value) => {
+  if (!value) return null;
+  if (value instanceof Date) return value;
+  const d = new Date(/([zZ]|[+-]\d{2}:?\d{2})$/.test(value) ? value : `${value}Z`);
+  return isNaN(d.getTime()) ? null : d;
+};
+
+// "Tue, 1 Dec • 10:00 AM" for an interview slot.
+export const formatInterview = (value) => {
+  const d = parseServerDate(value);
+  if (!d) return '';
+  const day = d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+  const time = d.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase();
+  return `${day} • ${time}`;
+};
+
 // Job package is a Long number of LPA on the backend.
 export const pkgText = (job) => (job?.packageOffered != null ? `${job.packageOffered} LPA` : '—');
 

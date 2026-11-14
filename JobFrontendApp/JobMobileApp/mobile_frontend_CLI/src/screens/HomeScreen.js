@@ -7,12 +7,14 @@ import { font, radius } from '../theme';
 import { useTheme } from '../context/ThemeContext';
 import { CATEGORIES } from '../data/jobs';
 import { avatarFor } from '../assets';
-import { AppContext } from '../context/AppContext';
+import { AppContext, useRequireLogin } from '../context/AppContext';
+import BrandLogo from '../components/BrandLogo';
 import JobCard from '../components/JobCard';
 import { getAllJobs } from '../services/jobService';
 
 export default function HomeScreen({ navigation }) {
   const { user, profile } = useContext(AppContext);
+  const requireLogin = useRequireLogin();
   const { colors } = useTheme();
   const styles = makeStyles(colors);
   const [jobs, setJobs] = useState([]);
@@ -52,14 +54,18 @@ export default function HomeScreen({ navigation }) {
         refreshControl={<RefreshControl refreshing={false} onRefresh={load} tintColor={colors.accent} />}
       >
         <View style={styles.topRow}>
-          <View style={styles.greet}>
-            <Image source={avatarSource} style={styles.avatar} />
-            <View>
-              <Text style={styles.welcome}>Welcome back 👋</Text>
-              <Text style={styles.name}>{firstName}</Text>
+          {user ? (
+            <View style={styles.greet}>
+              <Image source={avatarSource} style={styles.avatar} />
+              <View>
+                <Text style={styles.welcome}>Welcome back 👋</Text>
+                <Text style={styles.name}>{firstName}</Text>
+              </View>
             </View>
-          </View>
-          <TouchableOpacity style={styles.bell} onPress={() => navigation.navigate('Notifications')}>
+          ) : (
+            <BrandLogo />
+          )}
+          <TouchableOpacity style={styles.bell} onPress={() => requireLogin(navigation, () => navigation.navigate('Notifications'))}>
             <Ionicons name="notifications-outline" size={21} color={colors.textDim} />
           </TouchableOpacity>
         </View>
@@ -84,7 +90,6 @@ export default function HomeScreen({ navigation }) {
                 <Text style={styles.catLetter}>{cat.letter}</Text>
               </View>
               <Text style={styles.catName}>{cat.name}</Text>
-              <Text style={styles.catCount}>{cat.count} jobs</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>

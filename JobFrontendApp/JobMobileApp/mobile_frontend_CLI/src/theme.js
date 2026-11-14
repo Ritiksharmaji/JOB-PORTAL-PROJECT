@@ -1,4 +1,4 @@
-// Jobify design tokens — dark + light palettes (toggle via ThemeContext).
+// oneKampus Jobs design tokens — dark + light palettes (toggle via ThemeContext).
 export const darkColors = {
   bg: '#2d2d2d',
   card: '#3d3d3d',
