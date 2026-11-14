@@ -1,5 +1,7 @@
 package com.jobportal.api;
 
+import com.jobportal.utility.PublicView;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +29,14 @@ public class NotificationAPI {
 	private NotificationService notificationService;
 	
 	@GetMapping("/get/{userId}")
-	public ResponseEntity<List<Notification>>getNotifications(@PathVariable Long userId){
+	public ResponseEntity<List<Notification>>getNotifications(@PathVariable Long userId) throws JobPortalException{
+		PublicView.requireSelfOrAdmin(userId);
 		return new ResponseEntity<>(notificationService.getUnreadNotifications(userId), HttpStatus.OK);
 	}
 	@PutMapping("/read/{id}")
 	public ResponseEntity<ResponseDTO>readNotification(@PathVariable Long id) throws JobPortalException{
+		PublicView.requireViewer();
+		notificationService.requireOwner(id);
 		notificationService.readNotification(id);
 		return new ResponseEntity<>(new ResponseDTO("Success"), HttpStatus.OK);
 	}

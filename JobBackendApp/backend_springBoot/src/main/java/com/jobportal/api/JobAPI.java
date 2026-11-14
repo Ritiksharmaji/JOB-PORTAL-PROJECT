@@ -69,12 +69,14 @@ public class JobAPI {
 	}
 	@GetMapping("/postedBy/{id}")
 	public ResponseEntity<List<JobDTO>>getJobsPostedBy(@PathVariable Long id) throws JobPortalException{
+		PublicView.requireSelfOrAdmin(id);
 		return new ResponseEntity<>(jobService.getJobsPostedBy(id), HttpStatus.OK);
 	}
 	
 	@GetMapping("/history/{id}/{applicationStatus}")
 	public ResponseEntity<List<JobDTO>>getHistory(@PathVariable Long id,@PathVariable ApplicationStatus applicationStatus) throws JobPortalException{
-		return new ResponseEntity<>(jobService.getHistory(id, applicationStatus), HttpStatus.OK);
+		PublicView.requireSelfOrAdmin(id);
+		return new ResponseEntity<>(PublicView.jobs(jobService.getHistory(id, applicationStatus)), HttpStatus.OK);
 	}
 	@PostMapping("/changeAppStatus")
 	public ResponseEntity<ResponseDTO>changeAppStatus(@RequestBody Application application) throws JobPortalException{

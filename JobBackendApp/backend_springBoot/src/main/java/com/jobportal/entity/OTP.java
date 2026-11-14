@@ -18,4 +18,6 @@ public class OTP {
 	private String email;  
     private String otpCode;
     private LocalDateTime creationTime;
+    /** Set by verifyOtp; changePassword only works after this. */
+    private boolean verified;
 }
