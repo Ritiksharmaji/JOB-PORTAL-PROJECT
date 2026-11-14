@@ -41,6 +41,8 @@ messages:
   JOB_NOT_FOUND: Job not found.
   JOB_APPLIED_ALREADY: Already Applied to this Job.
   APPLICANT_NOT_FOUND: Applicant not found.
+  NOT_ALLOWED: You are not allowed to do this.
+  LOGIN_REQUIRED: Please log in first.
   NOTIFICATION_NOT_FOUND: No Notitication found
   PROFILE_SERVICE_UNAVAILABLE: Sign-up is temporarily unavailable. Please try again in a minute.
   user.name.absent: Name is required.
